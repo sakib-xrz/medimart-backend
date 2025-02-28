@@ -41,13 +41,7 @@ const Login = async (payload: LoginType) => {
     config.jwt_access_token_expires_in as string,
   );
 
-  const refreshToken = AuthUtils.CreateToken(
-    jwtPayload,
-    config.jwt_refresh_token_secret as string,
-    config.jwt_refresh_token_expires_in as string,
-  );
-
-  return { accessToken, refreshToken };
+  return { accessToken };
 };
 
 const Register = async (payload: RegisterType) => {
@@ -58,39 +52,6 @@ const Register = async (payload: RegisterType) => {
   }
 
   const user = await User.create({ ...payload });
-
-  const jwtPayload = {
-    id: user._id,
-    email: user.email,
-    role: user.role,
-  };
-
-  const accessToken = AuthUtils.CreateToken(
-    jwtPayload,
-    config.jwt_access_token_secret as string,
-    config.jwt_access_token_expires_in as string,
-  );
-
-  const refreshToken = AuthUtils.CreateToken(
-    jwtPayload,
-    config.jwt_refresh_token_secret as string,
-    config.jwt_refresh_token_expires_in as string,
-  );
-
-  return { accessToken, refreshToken };
-};
-
-const RefreshToken = async (refreshToken: string) => {
-  const decoded = AuthUtils.VerifyToken(
-    refreshToken,
-    config.jwt_refresh_token_secret as string,
-  ) as JwtPayload;
-
-  const user = await User.findOne({ _id: decoded.id, is_blocked: false });
-
-  if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, 'No user found');
-  }
 
   const jwtPayload = {
     id: user._id,
@@ -136,6 +97,6 @@ const ChangePassword = async (
   await isUserValid.save();
 };
 
-const AuthService = { Login, Register, RefreshToken, ChangePassword };
+const AuthService = { Login, Register, ChangePassword };
 
 export default AuthService;

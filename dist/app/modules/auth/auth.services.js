@@ -37,8 +37,7 @@ const Login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         role: user.role,
     };
     const accessToken = auth_utils_1.default.CreateToken(jwtPayload, config_1.default.jwt_access_token_secret, config_1.default.jwt_access_token_expires_in);
-    const refreshToken = auth_utils_1.default.CreateToken(jwtPayload, config_1.default.jwt_refresh_token_secret, config_1.default.jwt_refresh_token_expires_in);
-    return { accessToken, refreshToken };
+    return { accessToken };
 });
 const Register = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const isUserExists = yield user_model_1.User.isUserExists(payload.email);
@@ -46,21 +45,6 @@ const Register = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         throw new AppError_1.default(http_status_1.default.CONFLICT, 'User already exists');
     }
     const user = yield user_model_1.User.create(Object.assign({}, payload));
-    const jwtPayload = {
-        id: user._id,
-        email: user.email,
-        role: user.role,
-    };
-    const accessToken = auth_utils_1.default.CreateToken(jwtPayload, config_1.default.jwt_access_token_secret, config_1.default.jwt_access_token_expires_in);
-    const refreshToken = auth_utils_1.default.CreateToken(jwtPayload, config_1.default.jwt_refresh_token_secret, config_1.default.jwt_refresh_token_expires_in);
-    return { accessToken, refreshToken };
-});
-const RefreshToken = (refreshToken) => __awaiter(void 0, void 0, void 0, function* () {
-    const decoded = auth_utils_1.default.VerifyToken(refreshToken, config_1.default.jwt_refresh_token_secret);
-    const user = yield user_model_1.User.findOne({ _id: decoded.id, is_blocked: false });
-    if (!user) {
-        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'No user found');
-    }
     const jwtPayload = {
         id: user._id,
         email: user.email,
@@ -84,5 +68,5 @@ const ChangePassword = (payload, user) => __awaiter(void 0, void 0, void 0, func
     isUserValid.password = payload.newPassword;
     yield isUserValid.save();
 });
-const AuthService = { Login, Register, RefreshToken, ChangePassword };
+const AuthService = { Login, Register, ChangePassword };
 exports.default = AuthService;

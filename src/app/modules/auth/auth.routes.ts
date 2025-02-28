@@ -18,10 +18,6 @@ router.post(
   AuthController.Register,
 );
 
-router.post('/logout', AuthController.Logout);
-
-router.post('/refresh-token', AuthController.RefreshToken);
-
 router.patch(
   '/change-password',
   auth('ADMIN', 'CUSTOMER'),
