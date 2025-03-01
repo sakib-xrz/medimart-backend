@@ -15,10 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const http_status_1 = __importDefault(require("http-status"));
+const handelFile_1 = require("../../utils/handelFile");
 // import ProductImageService from './product-image.services';
 const UploadProductImage = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const productImageData = req.body;
-    console.dir(productImageData, { productImageData });
+    // const productImageData = req.body;
+    const file = req.file;
+    // eslint-disable-next-line no-undef
+    const result = yield (0, handelFile_1.uploadToCloudinary)(file);
+    console.log('result', result);
     //   const result = await ProductImageService.UploadProductImage(productImageData);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.CREATED,
