@@ -14,7 +14,7 @@ const Login = async (payload: LoginType) => {
     throw new AppError(httpStatus.NOT_FOUND, 'No user found with this email');
   }
 
-  const is_blocked = user?.is_blocked;
+  const is_blocked = user?.status === 'BLOCKED';
 
   if (is_blocked) {
     throw new AppError(httpStatus.FORBIDDEN, 'User is blocked');

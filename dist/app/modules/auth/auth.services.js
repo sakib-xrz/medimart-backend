@@ -23,7 +23,7 @@ const Login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     if (!user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'No user found with this email');
     }
-    const is_blocked = user === null || user === void 0 ? void 0 : user.is_blocked;
+    const is_blocked = (user === null || user === void 0 ? void 0 : user.status) === 'BLOCKED';
     if (is_blocked) {
         throw new AppError_1.default(http_status_1.default.FORBIDDEN, 'User is blocked');
     }

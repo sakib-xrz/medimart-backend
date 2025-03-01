@@ -34,7 +34,7 @@ const auth = (...roles) => {
         if (!user) {
             throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, "You're not authorized to access this route");
         }
-        const is_blocked = user === null || user === void 0 ? void 0 : user.is_blocked;
+        const is_blocked = (user === null || user === void 0 ? void 0 : user.status) === 'BLOCKED';
         if (is_blocked) {
             throw new AppError_1.default(http_status_1.default.FORBIDDEN, "You're not authorized to access this route");
         }

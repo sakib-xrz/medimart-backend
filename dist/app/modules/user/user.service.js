@@ -41,16 +41,16 @@ const GetAllCustomers = (query) => __awaiter(void 0, void 0, void 0, function* (
         data: users,
     };
 });
-const BlockUser = (targatedUserId, user) => __awaiter(void 0, void 0, void 0, function* () {
-    const targatedUser = yield user_model_1.User.findById(targatedUserId);
-    if (!targatedUser) {
+const BlockUser = (targetedUserId, user) => __awaiter(void 0, void 0, void 0, function* () {
+    const targetedUser = yield user_model_1.User.findById(targetedUserId);
+    if (!targetedUser) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found');
     }
-    if (targatedUser._id.toString() === user._id.toString()) {
+    if (targetedUser._id.toString() === user._id.toString()) {
         throw new AppError_1.default(http_status_1.default.FORBIDDEN, 'You can not block yourself');
     }
-    yield user_model_1.User.findByIdAndUpdate(targatedUserId, {
-        is_blocked: targatedUser.is_blocked ? false : true,
+    yield user_model_1.User.findByIdAndUpdate(targetedUserId, {
+        status: targetedUser.status === 'BLOCKED' ? 'ACTIVE' : 'BLOCKED',
     });
 });
 const UserService = { GetMyProfile, GetAllCustomers, BlockUser };

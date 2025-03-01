@@ -39,19 +39,19 @@ const GetAllCustomers = async (query: Record<string, unknown>) => {
   };
 };
 
-const BlockUser = async (targatedUserId: string, user: JwtPayload) => {
-  const targatedUser = await User.findById(targatedUserId);
+const BlockUser = async (targetedUserId: string, user: JwtPayload) => {
+  const targetedUser = await User.findById(targetedUserId);
 
-  if (!targatedUser) {
+  if (!targetedUser) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   }
 
-  if (targatedUser._id.toString() === user._id.toString()) {
+  if (targetedUser._id.toString() === user._id.toString()) {
     throw new AppError(httpStatus.FORBIDDEN, 'You can not block yourself');
   }
 
-  await User.findByIdAndUpdate(targatedUserId, {
-    is_blocked: targatedUser.is_blocked ? false : true,
+  await User.findByIdAndUpdate(targetedUserId, {
+    status: targetedUser.status === 'BLOCKED' ? 'ACTIVE' : 'BLOCKED',
   });
 };
 

@@ -45,7 +45,7 @@ const auth = (...roles: Role[]) => {
         );
       }
 
-      const is_blocked = user?.is_blocked;
+      const is_blocked = user?.status === 'BLOCKED';
 
       if (is_blocked) {
         throw new AppError(
