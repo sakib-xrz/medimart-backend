@@ -4,6 +4,11 @@ import OrderConstants from './order.constant';
 
 const OrderSchema = new mongoose.Schema<OrderInterface>(
   {
+    order_id: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

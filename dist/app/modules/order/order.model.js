@@ -7,6 +7,11 @@ exports.Order = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const order_constant_1 = __importDefault(require("./order.constant"));
 const OrderSchema = new mongoose_1.default.Schema({
+    order_id: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     user_id: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: 'User',

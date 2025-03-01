@@ -12,6 +12,7 @@ type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED' | 'CANCELLED';
 type ShippingCity = 'INSIDE_DHAKA' | 'OUTSIDE_DHAKA';
 
 export interface OrderInterface {
+  order_id: string;
   user_id: mongoose.Types.ObjectId;
   customer_name: string;
   customer_email: string;
