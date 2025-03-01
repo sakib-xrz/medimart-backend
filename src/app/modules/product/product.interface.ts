@@ -1,10 +1,29 @@
+type CategoryType =
+  | 'Pain Relief'
+  | 'Antibiotics'
+  | 'Cold & Flu'
+  | 'Digestive Health'
+  | 'Allergy & Asthma'
+  | 'Diabetes Care'
+  | 'Cardiovascular Health'
+  | 'Skin Care & Dermatology'
+  | 'Mental Health & Neurology'
+  | "Women's Health"
+  | 'Vitamins & Supplements'
+  | 'Eye & Ear Care'
+  | 'Baby & Child Health'
+  | 'First Aid & Wound Care';
+
 export interface ProductInterface {
-  id: number;
   name: string;
-  price: number;
   description: string;
-  image: string;
-  quantity: number;
-  rating: number;
-  status: boolean;
+  category: CategoryType;
+  price: number;
+  discount: number;
+  discount_type: 'PERCENTAGE' | 'FLAT';
+  stock: number;
+  requires_prescription: boolean;
+  manufacturer_details: string;
+  expiry_date: string;
+  is_deleted: boolean;
 }
