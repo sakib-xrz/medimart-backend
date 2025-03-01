@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const product_image_model_1 = require("../product-image/product-image.model");
 const product_model_1 = require("./product.model");
 const CreateMultipleProduct = (productsData) => __awaiter(void 0, void 0, void 0, function* () {
     const products = yield product_model_1.Product.insertMany(productsData);
@@ -24,6 +25,7 @@ const CreateProduct = (productData) => __awaiter(void 0, void 0, void 0, functio
     return product.toObject();
 });
 const GetAllProducts = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    query = Object.assign(Object.assign({}, query), { is_deleted: false, fields: '-is_deleted,-createdAt,-updatedAt,-__v' });
     const queryBuilder = new QueryBuilder_1.default(product_model_1.Product.find(), query);
     const productsQuery = queryBuilder
         .search(['name', 'description', 'category'])
@@ -32,12 +34,28 @@ const GetAllProducts = (query) => __awaiter(void 0, void 0, void 0, function* ()
         .fields()
         .paginate();
     const [data, total] = yield Promise.all([
-        productsQuery.modelQuery.exec(),
+        productsQuery.modelQuery.lean().exec(),
         queryBuilder.getCountQuery(),
     ]);
+    const productIds = data.map((product) => product._id);
+    const images = yield product_image_model_1.ProductImage.find({
+        product_id: { $in: productIds },
+    }).lean();
+    const productMap = new Map();
+    data.forEach((product) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        productMap.set(product._id.toString(), Object.assign(Object.assign({}, product), { images: [] }));
+    });
+    images.forEach((image) => {
+        const productId = image.product_id.toString();
+        if (productMap.has(productId)) {
+            productMap.get(productId).images.push(image);
+        }
+    });
     return {
         meta: Object.assign({ total }, queryBuilder.getPaginationInfo()),
-        data,
+        data: Array.from(productMap.values()),
     };
 });
 const ProductService = { CreateMultipleProduct, CreateProduct, GetAllProducts };

@@ -1,4 +1,5 @@
 import QueryBuilder from '../../builder/QueryBuilder';
+import { ProductImage } from '../product-image/product-image.model';
 import { ProductInterface } from './product.interface';
 import { Product } from './product.model';
 
@@ -14,6 +15,11 @@ const CreateProduct = async (productData: ProductInterface) => {
 };
 
 const GetAllProducts = async (query: Record<string, unknown>) => {
+  query = {
+    ...query,
+    is_deleted: false,
+    fields: '-is_deleted,-createdAt,-updatedAt,-__v',
+  };
   const queryBuilder = new QueryBuilder(Product.find(), query);
 
   const productsQuery = queryBuilder
@@ -24,16 +30,35 @@ const GetAllProducts = async (query: Record<string, unknown>) => {
     .paginate();
 
   const [data, total] = await Promise.all([
-    productsQuery.modelQuery.exec(),
+    productsQuery.modelQuery.lean().exec(),
     queryBuilder.getCountQuery(),
   ]);
+
+  const productIds = data.map((product) => product._id);
+  const images = await ProductImage.find({
+    product_id: { $in: productIds },
+  }).lean();
+
+  const productMap = new Map();
+  data.forEach((product) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    productMap.set(product._id.toString(), { ...product, images: [] });
+  });
+
+  images.forEach((image) => {
+    const productId = image.product_id.toString();
+    if (productMap.has(productId)) {
+      productMap.get(productId).images.push(image);
+    }
+  });
 
   return {
     meta: {
       total,
       ...queryBuilder.getPaginationInfo(),
     },
-    data,
+    data: Array.from(productMap.values()),
   };
 };
 
