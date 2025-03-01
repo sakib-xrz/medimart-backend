@@ -19,6 +19,12 @@ export default {
   frontend_base_url: process.env.FRONTEND_BASE_URL,
   backend_base_url: process.env.BACKEND_BASE_URL,
 
+  cloudinary: {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  },
+
   ssl: {
     store_id: process.env.SSL_STORE_ID,
     store_pass: process.env.SSL_STORE_PASS,
