@@ -12,7 +12,8 @@ const product_controller_1 = __importDefault(require("./product.controller"));
 const router = express_1.default.Router();
 router
     .route('/')
-    .post((0, auth_1.default)('ADMIN'), (0, validateRequest_1.default)(product_validation_1.default.CreateProductSchema), product_controller_1.default.CreateProduct);
+    .post((0, auth_1.default)('ADMIN'), (0, validateRequest_1.default)(product_validation_1.default.CreateProductSchema), product_controller_1.default.CreateProduct)
+    .get(product_controller_1.default.GetAllProducts);
 router
     .route('/bulk')
     .post((0, auth_1.default)('ADMIN'), (0, validateRequest_1.default)(product_validation_1.default.CreateMultipleProductSchema), product_controller_1.default.CreateMultipleProduct);

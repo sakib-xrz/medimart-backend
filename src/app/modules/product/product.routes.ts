@@ -12,7 +12,8 @@ router
     auth('ADMIN'),
     validateRequest(ProductValidation.CreateProductSchema),
     ProductController.CreateProduct,
-  );
+  )
+  .get(ProductController.GetAllProducts);
 
 router
   .route('/bulk')

@@ -30,6 +30,22 @@ const CreateProduct = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const ProductController = { CreateMultipleProduct, CreateProduct };
+const GetAllProducts = catchAsync(async (req: Request, res: Response) => {
+  const result = await ProductService.GetAllProducts(req.query);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Bicycles retrieved successfully',
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
+const ProductController = {
+  CreateMultipleProduct,
+  CreateProduct,
+  GetAllProducts,
+};
 
 export default ProductController;

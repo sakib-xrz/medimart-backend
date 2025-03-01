@@ -36,5 +36,19 @@ const CreateProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
         data: result,
     });
 }));
-const ProductController = { CreateMultipleProduct, CreateProduct };
+const GetAllProducts = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield product_services_1.default.GetAllProducts(req.query);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Bicycles retrieved successfully',
+        meta: result.meta,
+        data: result.data,
+    });
+}));
+const ProductController = {
+    CreateMultipleProduct,
+    CreateProduct,
+    GetAllProducts,
+};
 exports.default = ProductController;

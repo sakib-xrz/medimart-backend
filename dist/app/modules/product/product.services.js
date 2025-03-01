@@ -8,7 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
 const product_model_1 = require("./product.model");
 const CreateMultipleProduct = (productsData) => __awaiter(void 0, void 0, void 0, function* () {
     const products = yield product_model_1.Product.insertMany(productsData);
@@ -19,5 +23,22 @@ const CreateProduct = (productData) => __awaiter(void 0, void 0, void 0, functio
     yield product.save();
     return product.toObject();
 });
-const ProductService = { CreateMultipleProduct, CreateProduct };
+const GetAllProducts = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const queryBuilder = new QueryBuilder_1.default(product_model_1.Product.find(), query);
+    const productsQuery = queryBuilder
+        .search(['name', 'description', 'category'])
+        .filter()
+        .sort()
+        .fields()
+        .paginate();
+    const [data, total] = yield Promise.all([
+        productsQuery.modelQuery.exec(),
+        queryBuilder.getCountQuery(),
+    ]);
+    return {
+        meta: Object.assign({ total }, queryBuilder.getPaginationInfo()),
+        data,
+    };
+});
+const ProductService = { CreateMultipleProduct, CreateProduct, GetAllProducts };
 exports.default = ProductService;
