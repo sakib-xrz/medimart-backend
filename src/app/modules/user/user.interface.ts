@@ -7,7 +7,8 @@ export interface UserInterface {
   email: string;
   password: string;
   role: 'ADMIN' | 'CUSTOMER';
-  is_blocked?: boolean;
+  status: 'ACTIVE' | 'BLOCKED';
+  is_deleted?: boolean;
 }
 
 export interface UserModel extends Model<UserInterface> {

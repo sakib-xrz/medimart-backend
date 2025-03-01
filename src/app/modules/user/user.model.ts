@@ -25,7 +25,13 @@ const UserSchema = new mongoose.Schema<UserInterface, UserModel>(
       enum: ['ADMIN', 'CUSTOMER'],
       default: 'CUSTOMER',
     },
-    is_blocked: {
+    status: {
+      type: String,
+      required: true,
+      enum: ['ACTIVE', 'BLOCKED'],
+      default: 'ACTIVE',
+    },
+    is_deleted: {
       type: Boolean,
       default: false,
     },
