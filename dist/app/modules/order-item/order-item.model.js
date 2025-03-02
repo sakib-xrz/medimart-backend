@@ -39,9 +39,5 @@ const OrderItemSchema = new mongoose_1.default.Schema({
     },
 }, {
     timestamps: true,
-    toJSON: {
-        virtuals: true,
-        versionKey: false,
-    },
 });
 exports.OrderItem = mongoose_1.default.model('OrderItem', OrderItemSchema);

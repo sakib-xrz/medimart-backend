@@ -12,7 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const http_status_1 = __importDefault(require("http-status"));
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const AppError_1 = __importDefault(require("../../errors/AppError"));
 const product_model_1 = require("./product.model");
 const CreateMultipleProduct = (productsData) => __awaiter(void 0, void 0, void 0, function* () {
     const products = yield product_model_1.Product.insertMany(productsData);
@@ -24,10 +26,10 @@ const CreateProduct = (productData) => __awaiter(void 0, void 0, void 0, functio
     return product.toObject();
 });
 const GetAllProducts = (query) => __awaiter(void 0, void 0, void 0, function* () {
-    query = Object.assign(Object.assign({}, query), { is_deleted: false });
+    query = Object.assign(Object.assign({}, query), { fields: '-createdAt -updatedAt -is_deleted -__v', is_deleted: false });
     const queryBuilder = new QueryBuilder_1.default(product_model_1.Product.find().populate({
         path: 'images',
-        select: 'image_url type public_id',
+        select: 'image_url type -_id',
     }), query);
     const productsQuery = queryBuilder
         .search(['name', 'description', 'category'])
@@ -42,5 +44,23 @@ const GetAllProducts = (query) => __awaiter(void 0, void 0, void 0, function* ()
         data: products,
     };
 });
-const ProductService = { CreateMultipleProduct, CreateProduct, GetAllProducts };
+const GetProductById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const product = yield product_model_1.Product.findById(id)
+        .populate({
+        path: 'images',
+        select: 'image_url type -_id',
+    })
+        .select('-createdAt -updatedAt -is_deleted -__v')
+        .lean();
+    if (!product) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Product not found');
+    }
+    return product;
+});
+const ProductService = {
+    CreateMultipleProduct,
+    CreateProduct,
+    GetAllProducts,
+    GetProductById,
+};
 exports.default = ProductService;

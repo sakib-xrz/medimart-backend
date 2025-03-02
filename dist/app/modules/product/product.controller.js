@@ -46,9 +46,20 @@ const GetAllProducts = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
         data: result.data,
     });
 }));
+const GetProductById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield product_services_1.default.GetProductById(id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Bicycle retrieved successfully',
+        data: result,
+    });
+}));
 const ProductController = {
     CreateMultipleProduct,
     CreateProduct,
     GetAllProducts,
+    GetProductById,
 };
 exports.default = ProductController;

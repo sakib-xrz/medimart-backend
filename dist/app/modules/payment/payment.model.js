@@ -29,9 +29,5 @@ const PaymentSchema = new mongoose_1.default.Schema({
     },
 }, {
     timestamps: true,
-    toJSON: {
-        virtuals: true,
-        versionKey: false,
-    },
 });
 exports.Payment = mongoose_1.default.model('Payment', PaymentSchema);

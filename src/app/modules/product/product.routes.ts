@@ -23,4 +23,6 @@ router
     ProductController.CreateMultipleProduct,
   );
 
+router.route('/:id').get(ProductController.GetProductById);
+
 export const ProductRoutes = router;

@@ -58,13 +58,6 @@ const ProductSchema = new mongoose.Schema<ProductInterface>(
   },
   {
     timestamps: true,
-    toJSON: {
-      virtuals: true,
-      versionKey: false,
-    },
-    toObject: {
-      virtuals: true,
-    },
   },
 );
 

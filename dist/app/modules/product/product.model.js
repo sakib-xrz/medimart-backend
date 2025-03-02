@@ -60,12 +60,5 @@ const ProductSchema = new mongoose_1.default.Schema({
     },
 }, {
     timestamps: true,
-    toJSON: {
-        virtuals: true,
-        versionKey: false,
-    },
-    toObject: {
-        virtuals: true,
-    },
 });
 exports.Product = mongoose_1.default.model('Product', ProductSchema);

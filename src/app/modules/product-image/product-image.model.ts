@@ -25,10 +25,6 @@ const ProductImageSchema = new mongoose.Schema<ProductImageInterface>(
   },
   {
     timestamps: true,
-    toJSON: {
-      virtuals: true,
-      versionKey: false,
-    },
   },
 );
 

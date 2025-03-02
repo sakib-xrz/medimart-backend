@@ -27,9 +27,5 @@ const ProductImageSchema = new mongoose_1.default.Schema({
     },
 }, {
     timestamps: true,
-    toJSON: {
-        virtuals: true,
-        versionKey: false,
-    },
 });
 exports.ProductImage = mongoose_1.default.model('ProductImage', ProductImageSchema);

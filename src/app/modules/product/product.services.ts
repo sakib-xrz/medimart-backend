@@ -1,4 +1,6 @@
+import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
+import AppError from '../../errors/AppError';
 import { ProductInterface } from './product.interface';
 import { Product } from './product.model';
 
@@ -16,13 +18,14 @@ const CreateProduct = async (productData: ProductInterface) => {
 const GetAllProducts = async (query: Record<string, unknown>) => {
   query = {
     ...query,
+    fields: '-createdAt -updatedAt -is_deleted -__v',
     is_deleted: false,
   };
 
   const queryBuilder = new QueryBuilder(
     Product.find().populate({
       path: 'images',
-      select: 'image_url type public_id',
+      select: 'image_url type -_id',
     }),
     query,
   );
@@ -46,6 +49,27 @@ const GetAllProducts = async (query: Record<string, unknown>) => {
   };
 };
 
-const ProductService = { CreateMultipleProduct, CreateProduct, GetAllProducts };
+const GetProductById = async (id: string) => {
+  const product = await Product.findById(id)
+    .populate({
+      path: 'images',
+      select: 'image_url type -_id',
+    })
+    .select('-createdAt -updatedAt -is_deleted -__v')
+    .lean();
+
+  if (!product) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Product not found');
+  }
+
+  return product;
+};
+
+const ProductService = {
+  CreateMultipleProduct,
+  CreateProduct,
+  GetAllProducts,
+  GetProductById,
+};
 
 export default ProductService;

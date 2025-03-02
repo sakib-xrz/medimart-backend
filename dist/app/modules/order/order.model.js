@@ -65,9 +65,5 @@ const OrderSchema = new mongoose_1.default.Schema({
     },
 }, {
     timestamps: true,
-    toJSON: {
-        virtuals: true,
-        versionKey: false,
-    },
 });
 exports.Order = mongoose_1.default.model('Order', OrderSchema);

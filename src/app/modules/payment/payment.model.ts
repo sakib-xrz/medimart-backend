@@ -27,10 +27,6 @@ const PaymentSchema = new mongoose.Schema<PaymentInterface>(
   },
   {
     timestamps: true,
-    toJSON: {
-      virtuals: true,
-      versionKey: false,
-    },
   },
 );
 

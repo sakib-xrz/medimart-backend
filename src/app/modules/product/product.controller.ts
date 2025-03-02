@@ -42,10 +42,23 @@ const GetAllProducts = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const GetProductById = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await ProductService.GetProductById(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Bicycle retrieved successfully',
+    data: result,
+  });
+});
+
 const ProductController = {
   CreateMultipleProduct,
   CreateProduct,
   GetAllProducts,
+  GetProductById,
 };
 
 export default ProductController;

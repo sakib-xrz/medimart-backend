@@ -63,10 +63,6 @@ const OrderSchema = new mongoose.Schema<OrderInterface>(
   },
   {
     timestamps: true,
-    toJSON: {
-      virtuals: true,
-      versionKey: false,
-    },
   },
 );
 
