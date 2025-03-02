@@ -16,19 +16,41 @@ const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const http_status_1 = __importDefault(require("http-status"));
 const handelFile_1 = require("../../utils/handelFile");
-// import ProductImageService from './product-image.services';
+const product_image_services_1 = __importDefault(require("./product-image.services"));
 const UploadProductImage = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // const productImageData = req.body;
     const file = req.file;
+    if (!file) {
+        (0, sendResponse_1.default)(res, {
+            statusCode: http_status_1.default.BAD_REQUEST,
+            success: false,
+            message: 'Please provide an image file',
+        });
+    }
+    if (!req.body.product_id) {
+        (0, sendResponse_1.default)(res, {
+            statusCode: http_status_1.default.BAD_REQUEST,
+            success: false,
+            message: 'Please provide a product id',
+        });
+    }
+    const cloudinaryResponse = yield (0, handelFile_1.uploadToCloudinary)(
     // eslint-disable-next-line no-undef
-    const result = yield (0, handelFile_1.uploadToCloudinary)(file);
-    console.log('result', result);
-    //   const result = await ProductImageService.UploadProductImage(productImageData);
+    file, {
+        folder: `/medimart/product/${req.body.product_id}`,
+        public_id: req.body.product_id,
+    });
+    const image_url = cloudinaryResponse.secure_url;
+    const payload = {
+        product_id: req.body.product_id,
+        image_url,
+        type: req.body.type,
+    };
+    const result = yield product_image_services_1.default.UploadProductImage(payload);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.CREATED,
         success: true,
         message: 'Product image uploaded successfully',
-        // data: result,
+        data: result,
     });
 }));
 const ProductImageController = { UploadProductImage };
