@@ -40,7 +40,9 @@ const GetAllProducts = (query) => __awaiter(void 0, void 0, void 0, function* ()
     const productIds = data.map((product) => product._id);
     const images = yield product_image_model_1.ProductImage.find({
         product_id: { $in: productIds },
-    }).lean();
+    })
+        .select('-createdAt -updatedAt -__v')
+        .lean();
     const productMap = new Map();
     data.forEach((product) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

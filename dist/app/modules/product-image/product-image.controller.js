@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const http_status_1 = __importDefault(require("http-status"));
-const handelFile_1 = require("../../utils/handelFile");
 const product_image_services_1 = __importDefault(require("./product-image.services"));
 const UploadProductImage = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const file = req.file;
@@ -33,19 +32,7 @@ const UploadProductImage = (0, catchAsync_1.default)((req, res) => __awaiter(voi
             message: 'Please provide a product id',
         });
     }
-    const cloudinaryResponse = yield (0, handelFile_1.uploadToCloudinary)(
-    // eslint-disable-next-line no-undef
-    file, {
-        folder: `/medimart/product/${req.body.product_id}`,
-        public_id: req.body.product_id,
-    });
-    const image_url = cloudinaryResponse.secure_url;
-    const payload = {
-        product_id: req.body.product_id,
-        image_url,
-        type: req.body.type,
-    };
-    const result = yield product_image_services_1.default.UploadProductImage(payload);
+    const result = yield product_image_services_1.default.UploadProductImage(req.body, file);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.CREATED,
         success: true,

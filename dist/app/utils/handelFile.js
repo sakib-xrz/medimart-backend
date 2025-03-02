@@ -52,8 +52,7 @@ const uploadToCloudinary = (file_1, ...args_1) => __awaiter(void 0, [file_1, ...
         cloudinary_1.v2.uploader
             .upload_stream({
             folder: options.folder || 'uploads',
-            public_id: options.public_id ||
-                path_1.default.basename(file.originalname, path_1.default.extname(file.originalname)),
+            public_id: options.public_id || Date.now().toString(),
             use_filename: true,
             overwrite: true,
             invalidate: true,

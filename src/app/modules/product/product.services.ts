@@ -38,7 +38,7 @@ const GetAllProducts = async (query: Record<string, unknown>) => {
   const images = await ProductImage.find({
     product_id: { $in: productIds },
   })
-    .select('-product_id -createdAt -updatedAt -__v')
+    .select('-createdAt -updatedAt -__v')
     .lean();
 
   const productMap = new Map();

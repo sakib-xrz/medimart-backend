@@ -11,6 +11,10 @@ const ProductImageSchema = new mongoose_1.default.Schema({
         ref: 'Product',
         required: true,
     },
+    public_id: {
+        type: String,
+        required: true,
+    },
     image_url: {
         type: String,
         required: true,

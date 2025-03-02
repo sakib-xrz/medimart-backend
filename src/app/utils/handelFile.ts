@@ -54,9 +54,7 @@ const uploadToCloudinary = async (
       .upload_stream(
         {
           folder: options.folder || 'uploads',
-          public_id:
-            options.public_id ||
-            path.basename(file.originalname, path.extname(file.originalname)),
+          public_id: options.public_id || Date.now().toString(),
           use_filename: true,
           overwrite: true,
           invalidate: true,

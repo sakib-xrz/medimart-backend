@@ -1,8 +1,8 @@
+/* eslint-disable no-undef */
 import { Request, Response } from 'express';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
-import { uploadToCloudinary } from '../../utils/handelFile';
 import ProductImageService from './product-image.services';
 
 const UploadProductImage = catchAsync(async (req: Request, res: Response) => {
@@ -24,24 +24,10 @@ const UploadProductImage = catchAsync(async (req: Request, res: Response) => {
     });
   }
 
-  const cloudinaryResponse = await uploadToCloudinary(
-    // eslint-disable-next-line no-undef
+  const result = await ProductImageService.UploadProductImage(
+    req.body,
     file as Express.Multer.File,
-    {
-      folder: `/medimart/product/${req.body.product_id}`,
-      public_id: req.body.product_id,
-    },
   );
-
-  const image_url = (cloudinaryResponse as { secure_url: string }).secure_url;
-
-  const payload = {
-    product_id: req.body.product_id,
-    image_url,
-    type: req.body.type,
-  };
-
-  const result = await ProductImageService.UploadProductImage(payload);
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,

@@ -8,6 +8,10 @@ const ProductImageSchema = new mongoose.Schema<ProductImageInterface>(
       ref: 'Product',
       required: true,
     },
+    public_id: {
+      type: String,
+      required: true,
+    },
     image_url: {
       type: String,
       required: true,
