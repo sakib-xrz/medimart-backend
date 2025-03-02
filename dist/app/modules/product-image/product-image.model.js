@@ -10,6 +10,7 @@ const ProductImageSchema = new mongoose_1.default.Schema({
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: 'Product',
         required: true,
+        index: true,
     },
     public_id: {
         type: String,

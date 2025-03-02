@@ -16,6 +16,12 @@ const ProductSchema = new mongoose.Schema<ProductInterface>(
       enum: ProductConstants.Category,
       required: true,
     },
+    images: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ProductImage',
+      },
+    ],
     price: {
       type: Number,
       required: true,
@@ -55,6 +61,9 @@ const ProductSchema = new mongoose.Schema<ProductInterface>(
     toJSON: {
       virtuals: true,
       versionKey: false,
+    },
+    toObject: {
+      virtuals: true,
     },
   },
 );

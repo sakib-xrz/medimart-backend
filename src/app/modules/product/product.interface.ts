@@ -1,3 +1,5 @@
+import { ProductImageInterface } from '../product-image/product-image.interface';
+
 type CategoryType =
   | 'Pain Relief'
   | 'Antibiotics'
@@ -18,6 +20,7 @@ export interface ProductInterface {
   name: string;
   description: string;
   category: CategoryType;
+  images: ProductImageInterface[];
   price: number;
   discount: number;
   discount_type: 'PERCENTAGE' | 'FLAT';
