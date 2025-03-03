@@ -56,10 +56,33 @@ const GetProductById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
         data: result,
     });
 }));
+const UpdateProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const productData = req.body;
+    const result = yield product_services_1.default.UpdateProduct(id, productData);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Medicine updated successfully',
+        data: result,
+    });
+}));
+const DeleteProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    yield product_services_1.default.DeleteProduct(id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Medicine deleted successfully',
+        data: {},
+    });
+}));
 const ProductController = {
     CreateMultipleProduct,
     CreateProduct,
     GetAllProducts,
     GetProductById,
+    UpdateProduct,
+    DeleteProduct,
 };
 exports.default = ProductController;

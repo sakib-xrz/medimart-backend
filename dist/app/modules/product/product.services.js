@@ -42,7 +42,7 @@ const GetAllProducts = (query) => __awaiter(void 0, void 0, void 0, function* ()
     };
 });
 const GetProductById = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const product = yield product_model_1.Product.findById(id)
+    const product = yield product_model_1.Product.findOne({ _id: id, is_deleted: false })
         .select('-createdAt -updatedAt -is_deleted -__v')
         .lean();
     if (!product) {
@@ -50,10 +50,32 @@ const GetProductById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     }
     return product;
 });
+const UpdateProduct = (productId, updates) => __awaiter(void 0, void 0, void 0, function* () {
+    const isProductExists = yield product_model_1.Product.findById(productId);
+    if (!isProductExists || isProductExists.is_deleted) {
+        throw new AppError_1.default(404, 'Product not found');
+    }
+    const updatedProduct = yield product_model_1.Product.findByIdAndUpdate(productId, updates, {
+        new: true,
+        runValidators: true,
+    });
+    return updatedProduct;
+});
+const DeleteProduct = (productId) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield product_model_1.Product.findByIdAndUpdate(productId, {
+        is_deleted: true,
+    });
+    if (!result) {
+        throw new AppError_1.default(404, 'Product not found');
+    }
+    return result;
+});
 const ProductService = {
     CreateMultipleProduct,
     CreateProduct,
     GetAllProducts,
     GetProductById,
+    UpdateProduct,
+    DeleteProduct,
 };
 exports.default = ProductService;
