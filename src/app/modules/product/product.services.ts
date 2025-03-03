@@ -22,13 +22,7 @@ const GetAllProducts = async (query: Record<string, unknown>) => {
     is_deleted: false,
   };
 
-  const queryBuilder = new QueryBuilder(
-    Product.find().populate({
-      path: 'images',
-      select: 'image_url type -_id',
-    }),
-    query,
-  );
+  const queryBuilder = new QueryBuilder(Product.find(), query);
 
   const productsQuery = queryBuilder
     .search(['name', 'description', 'category'])
@@ -51,10 +45,6 @@ const GetAllProducts = async (query: Record<string, unknown>) => {
 
 const GetProductById = async (id: string) => {
   const product = await Product.findById(id)
-    .populate({
-      path: 'images',
-      select: 'image_url type -_id',
-    })
     .select('-createdAt -updatedAt -is_deleted -__v')
     .lean();
 

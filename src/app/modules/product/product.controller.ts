@@ -36,7 +36,7 @@ const GetAllProducts = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Bicycles retrieved successfully',
+    message: 'Medicines retrieved successfully',
     meta: result.meta,
     data: result.data,
   });
@@ -49,7 +49,7 @@ const GetProductById = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Bicycle retrieved successfully',
+    message: 'Medicine retrieved successfully',
     data: result,
   });
 });
