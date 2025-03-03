@@ -44,7 +44,7 @@ const GetAllProducts = async (query: Record<string, unknown>) => {
 };
 
 const GetProductById = async (id: string) => {
-  const product = await Product.findById(id)
+  const product = await Product.findOne({ _id: id, is_deleted: false })
     .select('-createdAt -updatedAt -is_deleted -__v')
     .lean();
 
@@ -55,11 +55,43 @@ const GetProductById = async (id: string) => {
   return product;
 };
 
+const UpdateProduct = async (
+  productId: string,
+  updates: Partial<ProductInterface>,
+) => {
+  const isProductExists = await Product.findById(productId);
+
+  if (!isProductExists || isProductExists.is_deleted) {
+    throw new AppError(404, 'Product not found');
+  }
+
+  const updatedProduct = await Product.findByIdAndUpdate(productId, updates, {
+    new: true,
+    runValidators: true,
+  });
+
+  return updatedProduct;
+};
+
+const DeleteProduct = async (productId: string) => {
+  const result = await Product.findByIdAndUpdate(productId, {
+    is_deleted: true,
+  });
+
+  if (!result) {
+    throw new AppError(404, 'Product not found');
+  }
+
+  return result;
+};
+
 const ProductService = {
   CreateMultipleProduct,
   CreateProduct,
   GetAllProducts,
   GetProductById,
+  UpdateProduct,
+  DeleteProduct,
 };
 
 export default ProductService;

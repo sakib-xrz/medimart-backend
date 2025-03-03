@@ -54,11 +54,38 @@ const GetProductById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const UpdateProduct = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const productData = req.body;
+  const result = await ProductService.UpdateProduct(id, productData);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Medicine updated successfully',
+    data: result,
+  });
+});
+
+const DeleteProduct = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  await ProductService.DeleteProduct(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Medicine deleted successfully',
+    data: {},
+  });
+});
+
 const ProductController = {
   CreateMultipleProduct,
   CreateProduct,
   GetAllProducts,
   GetProductById,
+  UpdateProduct,
+  DeleteProduct,
 };
 
 export default ProductController;

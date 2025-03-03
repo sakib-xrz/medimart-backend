@@ -23,6 +23,14 @@ router
     ProductController.CreateMultipleProduct,
   );
 
-router.route('/:id').get(ProductController.GetProductById);
+router
+  .route('/:id')
+  .get(ProductController.GetProductById)
+  .patch(
+    auth('ADMIN'),
+    validateRequest(ProductValidation.UpdateProductSchema),
+    ProductController.UpdateProduct,
+  )
+  .delete(auth('ADMIN'), ProductController.DeleteProduct);
 
 export const ProductRoutes = router;
