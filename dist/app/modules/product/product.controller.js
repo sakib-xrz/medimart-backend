@@ -41,7 +41,7 @@ const GetAllProducts = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: 'Bicycles retrieved successfully',
+        message: 'Medicines retrieved successfully',
         meta: result.meta,
         data: result.data,
     });
@@ -52,7 +52,7 @@ const GetProductById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: 'Bicycle retrieved successfully',
+        message: 'Medicine retrieved successfully',
         data: result,
     });
 }));

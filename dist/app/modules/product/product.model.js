@@ -19,12 +19,6 @@ const ProductSchema = new mongoose_1.default.Schema({
         enum: product_constant_1.default.Category,
         required: true,
     },
-    images: [
-        {
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: 'ProductImage',
-        },
-    ],
     price: {
         type: Number,
         required: true,

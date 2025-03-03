@@ -27,10 +27,7 @@ const CreateProduct = (productData) => __awaiter(void 0, void 0, void 0, functio
 });
 const GetAllProducts = (query) => __awaiter(void 0, void 0, void 0, function* () {
     query = Object.assign(Object.assign({}, query), { fields: '-createdAt -updatedAt -is_deleted -__v', is_deleted: false });
-    const queryBuilder = new QueryBuilder_1.default(product_model_1.Product.find().populate({
-        path: 'images',
-        select: 'image_url type -_id',
-    }), query);
+    const queryBuilder = new QueryBuilder_1.default(product_model_1.Product.find(), query);
     const productsQuery = queryBuilder
         .search(['name', 'description', 'category'])
         .filter()
@@ -46,10 +43,6 @@ const GetAllProducts = (query) => __awaiter(void 0, void 0, void 0, function* ()
 });
 const GetProductById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const product = yield product_model_1.Product.findById(id)
-        .populate({
-        path: 'images',
-        select: 'image_url type -_id',
-    })
         .select('-createdAt -updatedAt -is_deleted -__v')
         .lean();
     if (!product) {
