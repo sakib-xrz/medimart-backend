@@ -3,9 +3,18 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
 import { ProductInterface } from './product.interface';
 import { Product } from './product.model';
+import ProductUtils from './product.utils';
 
 const CreateMultipleProduct = async (productsData: ProductInterface[]) => {
-  const products = await Product.insertMany(productsData);
+  const modifiedProductsData = productsData.map((product) => {
+    return {
+      ...product,
+      slug: ProductUtils.GenerateRandomProductSlug(),
+      in_stock: product.stock > 0,
+    };
+  });
+
+  const products = await Product.insertMany(modifiedProductsData);
   return products;
 };
 
@@ -25,7 +34,7 @@ const GetAllProducts = async (query: Record<string, unknown>) => {
   const queryBuilder = new QueryBuilder(Product.find(), query);
 
   const productsQuery = queryBuilder
-    .search(['name', 'description', 'category'])
+    .search(['name', 'category'])
     .filter()
     .sort()
     .fields()
