@@ -45,6 +45,17 @@ const GetFeatureProducts = (0, catchAsync_1.default)((req, res) => __awaiter(voi
         data: result,
     });
 }));
+const GetProductByCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { category_slug } = req.params;
+    const result = yield product_services_1.default.GetProductByCategory(category_slug, req.query);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Medicines retrieved successfully',
+        data: result.data,
+        meta: result.meta,
+    });
+}));
 const GetAllProducts = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield product_services_1.default.GetAllProducts(req.query);
     (0, sendResponse_1.default)(res, {
@@ -90,6 +101,7 @@ const ProductController = {
     CreateMultipleProduct,
     CreateProduct,
     GetFeatureProducts,
+    GetProductByCategory,
     GetAllProducts,
     GetProductBySlug,
     UpdateProduct,

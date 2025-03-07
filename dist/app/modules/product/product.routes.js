@@ -18,6 +18,7 @@ router
     .route('/bulk')
     .post((0, auth_1.default)('ADMIN'), (0, validateRequest_1.default)(product_validation_1.default.CreateMultipleProductSchema), product_controller_1.default.CreateMultipleProduct);
 router.get('/feature', product_controller_1.default.GetFeatureProducts);
+router.get('/category/:category_slug', product_controller_1.default.GetProductByCategory);
 router.get('/:slug', product_controller_1.default.GetProductBySlug);
 router
     .route('/:id')

@@ -43,14 +43,14 @@ const CreateProduct = (productData) => __awaiter(void 0, void 0, void 0, functio
 });
 const GetFeatureProducts = () => __awaiter(void 0, void 0, void 0, function* () {
     const products = yield product_model_1.Product.find({ is_deleted: false, in_stock: true })
-        .select('-createdAt -updatedAt -is_deleted -__v')
+        .select('-dosage -pack_size -manufacturer -createdAt -updatedAt -is_deleted -__v')
         .limit(4)
         .sort({ createdAt: -1 })
         .lean();
     return products;
 });
 const GetProductByCategory = (category_slug, query) => __awaiter(void 0, void 0, void 0, function* () {
-    query = Object.assign(Object.assign({}, query), { fields: '-createdAt -updatedAt -is_deleted -__v', is_deleted: false, category_slug });
+    query = Object.assign(Object.assign({}, query), { fields: '-dosage -pack_size -manufacturer -createdAt -updatedAt -is_deleted -__v', is_deleted: false, category_slug });
     const queryBuilder = new QueryBuilder_1.default(product_model_1.Product.find(), query);
     const productsQuery = queryBuilder
         .search(['name', 'category'])
@@ -66,7 +66,7 @@ const GetProductByCategory = (category_slug, query) => __awaiter(void 0, void 0,
     };
 });
 const GetAllProducts = (query) => __awaiter(void 0, void 0, void 0, function* () {
-    query = Object.assign(Object.assign({}, query), { fields: '-createdAt -updatedAt -is_deleted -__v', is_deleted: false });
+    query = Object.assign(Object.assign({}, query), { fields: '-dosage -pack_size -manufacturer -createdAt -updatedAt -is_deleted -__v', is_deleted: false });
     const queryBuilder = new QueryBuilder_1.default(product_model_1.Product.find(), query);
     const productsQuery = queryBuilder
         .search(['name', 'category'])
