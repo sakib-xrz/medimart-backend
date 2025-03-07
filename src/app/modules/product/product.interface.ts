@@ -11,6 +11,7 @@ export interface ProductInterface {
   slug: string;
   price: number;
   category: CategoryType;
+  category_slug: string;
   dosage?: string;
   form?: string;
   pack_size?: string;

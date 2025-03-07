@@ -26,6 +26,10 @@ const ProductSchema = new mongoose_1.default.Schema({
         enum: product_constant_1.default.Category,
         required: true,
     },
+    category_slug: {
+        type: String,
+        required: true,
+    },
     dosage: {
         type: String,
     },

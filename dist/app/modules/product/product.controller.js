@@ -55,9 +55,9 @@ const GetAllProducts = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
         data: result.data,
     });
 }));
-const GetProductById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.params;
-    const result = yield product_services_1.default.GetProductById(id);
+const GetProductBySlug = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { slug } = req.params;
+    const result = yield product_services_1.default.GetProductBySlug(slug);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -91,7 +91,7 @@ const ProductController = {
     CreateProduct,
     GetFeatureProducts,
     GetAllProducts,
-    GetProductById,
+    GetProductBySlug,
     UpdateProduct,
     DeleteProduct,
 };

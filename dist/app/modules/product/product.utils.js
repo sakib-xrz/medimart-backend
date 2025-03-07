@@ -4,7 +4,7 @@ const uuid_1 = require("uuid");
 function GenerateRandomProductSlug() {
     const uuid = (0, uuid_1.v4)();
     const alphanumeric = uuid.replace(/[^a-z0-9]/gi, '');
-    return `MED-${alphanumeric.substring(0, 6).toUpperCase()}`;
+    return `med-${alphanumeric.substring(0, 6)}`;
 }
 const ProductUtils = { GenerateRandomProductSlug };
 exports.default = ProductUtils;

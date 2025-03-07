@@ -25,9 +25,10 @@ router
 
 router.get('/feature', ProductController.GetFeatureProducts);
 
+router.get('/:slug', ProductController.GetProductBySlug);
+
 router
   .route('/:id')
-  .get(ProductController.GetProductById)
   .patch(
     auth('ADMIN'),
     validateRequest(ProductValidation.UpdateProductSchema),

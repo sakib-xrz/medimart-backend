@@ -4,6 +4,7 @@ import AppError from '../../errors/AppError';
 import { ProductInterface } from './product.interface';
 import { Product } from './product.model';
 import ProductUtils from './product.utils';
+import slugify from 'slugify';
 
 const CreateMultipleProduct = async (productsData: ProductInterface[]) => {
   const modifiedProductsData = productsData.map((product) => {
@@ -11,6 +12,11 @@ const CreateMultipleProduct = async (productsData: ProductInterface[]) => {
       ...product,
       slug: ProductUtils.GenerateRandomProductSlug(),
       in_stock: product.stock > 0,
+      category_slug: slugify(product.category, {
+        lower: true,
+        trim: true,
+        remove: /[*+~.()'"!:@]/g,
+      }),
     };
   });
 
@@ -21,6 +27,11 @@ const CreateMultipleProduct = async (productsData: ProductInterface[]) => {
 const CreateProduct = async (productData: ProductInterface) => {
   productData.slug = ProductUtils.GenerateRandomProductSlug();
   productData.in_stock = productData.stock > 0;
+  productData.category_slug = slugify(productData.category, {
+    lower: true,
+    trim: true,
+    remove: /[*+~.()'"!:@]/g,
+  });
 
   const product = new Product(productData);
   await product.save();
@@ -35,6 +46,38 @@ const GetFeatureProducts = async () => {
     .lean();
 
   return products;
+};
+
+const GetProductByCategory = async (
+  category_slug: string,
+  query: Record<string, unknown>,
+) => {
+  query = {
+    ...query,
+    fields: '-createdAt -updatedAt -is_deleted -__v',
+    is_deleted: false,
+    category_slug,
+  };
+
+  const queryBuilder = new QueryBuilder(Product.find(), query);
+
+  const productsQuery = queryBuilder
+    .search(['name', 'category'])
+    .filter()
+    .sort()
+    .fields()
+    .paginate();
+
+  const total = await queryBuilder.getCountQuery();
+  const products = await productsQuery.modelQuery;
+
+  return {
+    meta: {
+      total,
+      ...queryBuilder.getPaginationInfo(),
+    },
+    data: products,
+  };
 };
 
 const GetAllProducts = async (query: Record<string, unknown>) => {
@@ -65,8 +108,8 @@ const GetAllProducts = async (query: Record<string, unknown>) => {
   };
 };
 
-const GetProductById = async (id: string) => {
-  const product = await Product.findOne({ _id: id, is_deleted: false })
+const GetProductBySlug = async (slug: string) => {
+  const product = await Product.findOne({ slug, is_deleted: false })
     .select('-createdAt -updatedAt -is_deleted -__v')
     .lean();
 
@@ -111,8 +154,9 @@ const ProductService = {
   CreateMultipleProduct,
   CreateProduct,
   GetFeatureProducts,
+  GetProductByCategory,
   GetAllProducts,
-  GetProductById,
+  GetProductBySlug,
   UpdateProduct,
   DeleteProduct,
 };

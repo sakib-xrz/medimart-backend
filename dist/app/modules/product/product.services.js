@@ -17,9 +17,14 @@ const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const product_model_1 = require("./product.model");
 const product_utils_1 = __importDefault(require("./product.utils"));
+const slugify_1 = __importDefault(require("slugify"));
 const CreateMultipleProduct = (productsData) => __awaiter(void 0, void 0, void 0, function* () {
     const modifiedProductsData = productsData.map((product) => {
-        return Object.assign(Object.assign({}, product), { slug: product_utils_1.default.GenerateRandomProductSlug(), in_stock: product.stock > 0 });
+        return Object.assign(Object.assign({}, product), { slug: product_utils_1.default.GenerateRandomProductSlug(), in_stock: product.stock > 0, category_slug: (0, slugify_1.default)(product.category, {
+                lower: true,
+                trim: true,
+                remove: /[*+~.()'"!:@]/g,
+            }) });
     });
     const products = yield product_model_1.Product.insertMany(modifiedProductsData);
     return products;
@@ -27,6 +32,11 @@ const CreateMultipleProduct = (productsData) => __awaiter(void 0, void 0, void 0
 const CreateProduct = (productData) => __awaiter(void 0, void 0, void 0, function* () {
     productData.slug = product_utils_1.default.GenerateRandomProductSlug();
     productData.in_stock = productData.stock > 0;
+    productData.category_slug = (0, slugify_1.default)(productData.category, {
+        lower: true,
+        trim: true,
+        remove: /[*+~.()'"!:@]/g,
+    });
     const product = new product_model_1.Product(productData);
     yield product.save();
     return product.toObject();
@@ -38,6 +48,22 @@ const GetFeatureProducts = () => __awaiter(void 0, void 0, void 0, function* () 
         .sort({ createdAt: -1 })
         .lean();
     return products;
+});
+const GetProductByCategory = (category_slug, query) => __awaiter(void 0, void 0, void 0, function* () {
+    query = Object.assign(Object.assign({}, query), { fields: '-createdAt -updatedAt -is_deleted -__v', is_deleted: false, category_slug });
+    const queryBuilder = new QueryBuilder_1.default(product_model_1.Product.find(), query);
+    const productsQuery = queryBuilder
+        .search(['name', 'category'])
+        .filter()
+        .sort()
+        .fields()
+        .paginate();
+    const total = yield queryBuilder.getCountQuery();
+    const products = yield productsQuery.modelQuery;
+    return {
+        meta: Object.assign({ total }, queryBuilder.getPaginationInfo()),
+        data: products,
+    };
 });
 const GetAllProducts = (query) => __awaiter(void 0, void 0, void 0, function* () {
     query = Object.assign(Object.assign({}, query), { fields: '-createdAt -updatedAt -is_deleted -__v', is_deleted: false });
@@ -55,8 +81,8 @@ const GetAllProducts = (query) => __awaiter(void 0, void 0, void 0, function* ()
         data: products,
     };
 });
-const GetProductById = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const product = yield product_model_1.Product.findOne({ _id: id, is_deleted: false })
+const GetProductBySlug = (slug) => __awaiter(void 0, void 0, void 0, function* () {
+    const product = yield product_model_1.Product.findOne({ slug, is_deleted: false })
         .select('-createdAt -updatedAt -is_deleted -__v')
         .lean();
     if (!product) {
@@ -88,8 +114,9 @@ const ProductService = {
     CreateMultipleProduct,
     CreateProduct,
     GetFeatureProducts,
+    GetProductByCategory,
     GetAllProducts,
-    GetProductById,
+    GetProductBySlug,
     UpdateProduct,
     DeleteProduct,
 };

@@ -53,9 +53,9 @@ const GetAllProducts = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const GetProductById = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const result = await ProductService.GetProductById(id);
+const GetProductBySlug = catchAsync(async (req: Request, res: Response) => {
+  const { slug } = req.params;
+  const result = await ProductService.GetProductBySlug(slug);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -95,7 +95,7 @@ const ProductController = {
   CreateProduct,
   GetFeatureProducts,
   GetAllProducts,
-  GetProductById,
+  GetProductBySlug,
   UpdateProduct,
   DeleteProduct,
 };

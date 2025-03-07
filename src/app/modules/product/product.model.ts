@@ -23,6 +23,10 @@ const ProductSchema = new mongoose.Schema<ProductInterface>(
       enum: ProductConstants.Category,
       required: true,
     },
+    category_slug: {
+      type: String,
+      required: true,
+    },
     dosage: {
       type: String,
     },

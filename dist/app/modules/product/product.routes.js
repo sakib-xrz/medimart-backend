@@ -18,9 +18,9 @@ router
     .route('/bulk')
     .post((0, auth_1.default)('ADMIN'), (0, validateRequest_1.default)(product_validation_1.default.CreateMultipleProductSchema), product_controller_1.default.CreateMultipleProduct);
 router.get('/feature', product_controller_1.default.GetFeatureProducts);
+router.get('/:slug', product_controller_1.default.GetProductBySlug);
 router
     .route('/:id')
-    .get(product_controller_1.default.GetProductById)
     .patch((0, auth_1.default)('ADMIN'), (0, validateRequest_1.default)(product_validation_1.default.UpdateProductSchema), product_controller_1.default.UpdateProduct)
     .delete((0, auth_1.default)('ADMIN'), product_controller_1.default.DeleteProduct);
 exports.ProductRoutes = router;
