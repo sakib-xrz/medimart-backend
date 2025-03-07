@@ -4,7 +4,7 @@ import ProductConstants from './product.constant';
 const CreateProductSchema = z.object({
   body: z.object({
     name: z.string().min(1, 'Product name is required'),
-    description: z.string().optional(),
+    description: z.string().min(1, 'Product description is required'),
     category: z.enum([...ProductConstants.Category] as [string, ...string[]], {
       errorMap: () => ({ message: 'Invalid category' }),
     }),
@@ -13,11 +13,14 @@ const CreateProductSchema = z.object({
     discount_type: z.enum(['PERCENTAGE', 'FLAT']).default('PERCENTAGE'),
     stock: z.number().int().min(0, 'Stock cannot be negative').default(0),
     requires_prescription: z.boolean().default(false),
-    manufacturer_details: z
+    manufacturer: z.string().min(1, 'Manufacturer is required'),
+    expiry_date: z
       .string()
-      .min(1, 'Manufacturer details are required'),
-    expiry_date: z.string().min(1, 'Expiry date is required'),
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Expiry date must be in YYYY-MM-DD format'),
     is_deleted: z.boolean().default(false),
+    form: z.string().optional(),
+    dosage: z.string().optional(),
+    pack_size: z.string().optional(),
   }),
 });
 

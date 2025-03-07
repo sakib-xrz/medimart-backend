@@ -1,29 +1,26 @@
 type CategoryType =
-  | 'Pain Relief'
-  | 'Antibiotics'
-  | 'Cold & Flu'
-  | 'Digestive Health'
-  | 'Allergy & Asthma'
-  | 'Diabetes Care'
-  | 'Cardiovascular Health'
-  | 'Skin Care & Dermatology'
-  | 'Mental Health & Neurology'
+  | 'Supplements'
+  | 'First Aid'
   | "Women's Health"
-  | 'Vitamins & Supplements'
-  | 'Eye & Ear Care'
-  | 'Baby & Child Health'
-  | 'First Aid & Wound Care';
+  | 'Pain Relief'
+  | 'Skin Care'
+  | 'Digestive Health';
 
 export interface ProductInterface {
   name: string;
-  description: string;
-  category: CategoryType;
+  slug: string;
   price: number;
+  category: CategoryType;
+  dosage?: string;
+  form?: string;
+  pack_size?: string;
+  manufacturer: string;
+  description: string;
+  requires_prescription: boolean;
   discount: number;
   discount_type: 'PERCENTAGE' | 'FLAT';
   stock: number;
-  requires_prescription: boolean;
-  manufacturer_details: string;
-  expiry_date: string;
+  in_stock: boolean;
+  expiry_date: Date;
   is_deleted: boolean;
 }

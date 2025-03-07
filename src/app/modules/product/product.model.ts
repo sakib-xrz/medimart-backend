@@ -8,41 +8,61 @@ const ProductSchema = new mongoose.Schema<ProductInterface>(
       type: String,
       required: true,
     },
-    description: {
+    slug: {
       type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    price: {
+      type: Number,
+      required: true,
     },
     category: {
       type: String,
       enum: ProductConstants.Category,
       required: true,
     },
-    price: {
-      type: Number,
+    dosage: {
+      type: String,
+    },
+    form: {
+      type: String,
+    },
+    pack_size: {
+      type: String,
+    },
+    manufacturer: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    requires_prescription: {
+      type: Boolean,
       required: true,
     },
     discount: {
       type: Number,
-      default: 0,
+      required: true,
     },
     discount_type: {
       type: String,
-      enum: ['PERCENTAGE', 'FLAT'],
+      enum: ProductConstants.DiscountType,
       default: 'PERCENTAGE',
     },
     stock: {
       type: Number,
-      default: 0,
+      required: true,
     },
-    requires_prescription: {
+    in_stock: {
       type: Boolean,
-      default: false,
-    },
-    manufacturer_details: {
-      type: String,
       required: true,
     },
     expiry_date: {
-      type: String,
+      type: Date,
       required: true,
     },
     is_deleted: {
