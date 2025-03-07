@@ -40,9 +40,7 @@ const CreateProduct = async (productData: ProductInterface) => {
 
 const GetFeatureProducts = async () => {
   const products = await Product.find({ is_deleted: false, in_stock: true })
-    .select(
-      '-dosage -pack_size -manufacturer -createdAt -updatedAt -is_deleted -__v',
-    )
+    .select('-pack_size -manufacturer -createdAt -updatedAt -is_deleted -__v')
     .limit(4)
     .sort({ createdAt: -1 })
     .lean();
@@ -56,8 +54,7 @@ const GetProductByCategory = async (
 ) => {
   query = {
     ...query,
-    fields:
-      '-dosage -pack_size -manufacturer -createdAt -updatedAt -is_deleted -__v',
+    fields: '-pack_size -manufacturer -createdAt -updatedAt -is_deleted -__v',
     is_deleted: false,
     category_slug,
   };
@@ -86,8 +83,7 @@ const GetProductByCategory = async (
 const GetAllProducts = async (query: Record<string, unknown>) => {
   query = {
     ...query,
-    fields:
-      '-dosage -pack_size -manufacturer -createdAt -updatedAt -is_deleted -__v',
+    fields: '-pack_size -manufacturer -createdAt -updatedAt -is_deleted -__v',
     is_deleted: false,
   };
 
