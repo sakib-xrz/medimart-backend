@@ -41,6 +41,22 @@ const GetFeatureProducts = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const GetProductByCategory = catchAsync(async (req: Request, res: Response) => {
+  const { category_slug } = req.params;
+  const result = await ProductService.GetProductByCategory(
+    category_slug,
+    req.query,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Medicines retrieved successfully',
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
 const GetAllProducts = catchAsync(async (req: Request, res: Response) => {
   const result = await ProductService.GetAllProducts(req.query);
 
@@ -94,6 +110,7 @@ const ProductController = {
   CreateMultipleProduct,
   CreateProduct,
   GetFeatureProducts,
+  GetProductByCategory,
   GetAllProducts,
   GetProductBySlug,
   UpdateProduct,

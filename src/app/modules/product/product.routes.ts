@@ -25,6 +25,8 @@ router
 
 router.get('/feature', ProductController.GetFeatureProducts);
 
+router.get('/category/:category_slug', ProductController.GetProductByCategory);
+
 router.get('/:slug', ProductController.GetProductBySlug);
 
 router
