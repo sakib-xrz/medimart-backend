@@ -16,20 +16,34 @@ const http_status_1 = __importDefault(require("http-status"));
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const product_model_1 = require("./product.model");
+const product_utils_1 = __importDefault(require("./product.utils"));
 const CreateMultipleProduct = (productsData) => __awaiter(void 0, void 0, void 0, function* () {
-    const products = yield product_model_1.Product.insertMany(productsData);
+    const modifiedProductsData = productsData.map((product) => {
+        return Object.assign(Object.assign({}, product), { slug: product_utils_1.default.GenerateRandomProductSlug(), in_stock: product.stock > 0 });
+    });
+    const products = yield product_model_1.Product.insertMany(modifiedProductsData);
     return products;
 });
 const CreateProduct = (productData) => __awaiter(void 0, void 0, void 0, function* () {
+    productData.slug = product_utils_1.default.GenerateRandomProductSlug();
+    productData.in_stock = productData.stock > 0;
     const product = new product_model_1.Product(productData);
     yield product.save();
     return product.toObject();
+});
+const GetFeatureProducts = () => __awaiter(void 0, void 0, void 0, function* () {
+    const products = yield product_model_1.Product.find({ is_deleted: false, in_stock: true })
+        .select('-createdAt -updatedAt -is_deleted -__v')
+        .limit(4)
+        .sort({ createdAt: -1 })
+        .lean();
+    return products;
 });
 const GetAllProducts = (query) => __awaiter(void 0, void 0, void 0, function* () {
     query = Object.assign(Object.assign({}, query), { fields: '-createdAt -updatedAt -is_deleted -__v', is_deleted: false });
     const queryBuilder = new QueryBuilder_1.default(product_model_1.Product.find(), query);
     const productsQuery = queryBuilder
-        .search(['name', 'description', 'category'])
+        .search(['name', 'category'])
         .filter()
         .sort()
         .fields()
@@ -73,6 +87,7 @@ const DeleteProduct = (productId) => __awaiter(void 0, void 0, void 0, function*
 const ProductService = {
     CreateMultipleProduct,
     CreateProduct,
+    GetFeatureProducts,
     GetAllProducts,
     GetProductById,
     UpdateProduct,

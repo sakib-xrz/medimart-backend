@@ -36,6 +36,15 @@ const CreateProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
         data: result,
     });
 }));
+const GetFeatureProducts = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield product_services_1.default.GetFeatureProducts();
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Feature medicines retrieved successfully',
+        data: result,
+    });
+}));
 const GetAllProducts = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield product_services_1.default.GetAllProducts(req.query);
     (0, sendResponse_1.default)(res, {
@@ -80,6 +89,7 @@ const DeleteProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
 const ProductController = {
     CreateMultipleProduct,
     CreateProduct,
+    GetFeatureProducts,
     GetAllProducts,
     GetProductById,
     UpdateProduct,

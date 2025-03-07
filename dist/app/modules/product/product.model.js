@@ -11,41 +11,61 @@ const ProductSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
-    description: {
+    slug: {
         type: String,
+        required: true,
+        unique: true,
+        trim: true,
+    },
+    price: {
+        type: Number,
+        required: true,
     },
     category: {
         type: String,
         enum: product_constant_1.default.Category,
         required: true,
     },
-    price: {
-        type: Number,
+    dosage: {
+        type: String,
+    },
+    form: {
+        type: String,
+    },
+    pack_size: {
+        type: String,
+    },
+    manufacturer: {
+        type: String,
+        required: true,
+    },
+    description: {
+        type: String,
+        required: true,
+    },
+    requires_prescription: {
+        type: Boolean,
         required: true,
     },
     discount: {
         type: Number,
-        default: 0,
+        required: true,
     },
     discount_type: {
         type: String,
-        enum: ['PERCENTAGE', 'FLAT'],
+        enum: product_constant_1.default.DiscountType,
         default: 'PERCENTAGE',
     },
     stock: {
         type: Number,
-        default: 0,
+        required: true,
     },
-    requires_prescription: {
+    in_stock: {
         type: Boolean,
-        default: false,
-    },
-    manufacturer_details: {
-        type: String,
         required: true,
     },
     expiry_date: {
-        type: String,
+        type: Date,
         required: true,
     },
     is_deleted: {
@@ -54,5 +74,9 @@ const ProductSchema = new mongoose_1.default.Schema({
     },
 }, {
     timestamps: true,
+    toJSON: {
+        virtuals: true,
+        versionKey: false,
+    },
 });
 exports.Product = mongoose_1.default.model('Product', ProductSchema);

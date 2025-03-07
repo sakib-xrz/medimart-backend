@@ -8,7 +8,7 @@ const product_constant_1 = __importDefault(require("./product.constant"));
 const CreateProductSchema = zod_1.z.object({
     body: zod_1.z.object({
         name: zod_1.z.string().min(1, 'Product name is required'),
-        description: zod_1.z.string().optional(),
+        description: zod_1.z.string().min(1, 'Product description is required'),
         category: zod_1.z.enum([...product_constant_1.default.Category], {
             errorMap: () => ({ message: 'Invalid category' }),
         }),
@@ -17,11 +17,14 @@ const CreateProductSchema = zod_1.z.object({
         discount_type: zod_1.z.enum(['PERCENTAGE', 'FLAT']).default('PERCENTAGE'),
         stock: zod_1.z.number().int().min(0, 'Stock cannot be negative').default(0),
         requires_prescription: zod_1.z.boolean().default(false),
-        manufacturer_details: zod_1.z
+        manufacturer: zod_1.z.string().min(1, 'Manufacturer is required'),
+        expiry_date: zod_1.z
             .string()
-            .min(1, 'Manufacturer details are required'),
-        expiry_date: zod_1.z.string().min(1, 'Expiry date is required'),
+            .regex(/^\d{4}-\d{2}-\d{2}$/, 'Expiry date must be in YYYY-MM-DD format'),
         is_deleted: zod_1.z.boolean().default(false),
+        form: zod_1.z.string().optional(),
+        dosage: zod_1.z.string().optional(),
+        pack_size: zod_1.z.string().optional(),
     }),
 });
 const CreateMultipleProductSchema = zod_1.z.object({

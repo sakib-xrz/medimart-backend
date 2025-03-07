@@ -23,6 +23,8 @@ router
     ProductController.CreateMultipleProduct,
   );
 
+router.get('/feature', ProductController.GetFeatureProducts);
+
 router
   .route('/:id')
   .get(ProductController.GetProductById)

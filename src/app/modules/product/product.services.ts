@@ -19,9 +19,22 @@ const CreateMultipleProduct = async (productsData: ProductInterface[]) => {
 };
 
 const CreateProduct = async (productData: ProductInterface) => {
+  productData.slug = ProductUtils.GenerateRandomProductSlug();
+  productData.in_stock = productData.stock > 0;
+
   const product = new Product(productData);
   await product.save();
   return product.toObject();
+};
+
+const GetFeatureProducts = async () => {
+  const products = await Product.find({ is_deleted: false, in_stock: true })
+    .select('-createdAt -updatedAt -is_deleted -__v')
+    .limit(4)
+    .sort({ createdAt: -1 })
+    .lean();
+
+  return products;
 };
 
 const GetAllProducts = async (query: Record<string, unknown>) => {
@@ -97,6 +110,7 @@ const DeleteProduct = async (productId: string) => {
 const ProductService = {
   CreateMultipleProduct,
   CreateProduct,
+  GetFeatureProducts,
   GetAllProducts,
   GetProductById,
   UpdateProduct,

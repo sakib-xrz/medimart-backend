@@ -30,6 +30,17 @@ const CreateProduct = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const GetFeatureProducts = catchAsync(async (req: Request, res: Response) => {
+  const result = await ProductService.GetFeatureProducts();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Feature medicines retrieved successfully',
+    data: result,
+  });
+});
+
 const GetAllProducts = catchAsync(async (req: Request, res: Response) => {
   const result = await ProductService.GetAllProducts(req.query);
 
@@ -82,6 +93,7 @@ const DeleteProduct = catchAsync(async (req: Request, res: Response) => {
 const ProductController = {
   CreateMultipleProduct,
   CreateProduct,
+  GetFeatureProducts,
   GetAllProducts,
   GetProductById,
   UpdateProduct,

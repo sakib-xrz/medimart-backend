@@ -1,20 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Category = [
-    'Pain Relief',
-    'Antibiotics',
-    'Cold & Flu',
-    'Digestive Health',
-    'Allergy & Asthma',
-    'Diabetes Care',
-    'Cardiovascular Health',
-    'Skin Care & Dermatology',
-    'Mental Health & Neurology',
+    'Supplements',
+    'First Aid',
     "Women's Health",
-    'Vitamins & Supplements',
-    'Eye & Ear Care',
-    'Baby & Child Health',
-    'First Aid & Wound Care',
+    'Pain Relief',
+    'Skin Care',
+    'Digestive Health',
 ];
-const ProductConstants = { Category };
+const DiscountType = ['PERCENTAGE', 'FLAT'];
+const ProductConstants = { Category, DiscountType };
 exports.default = ProductConstants;
