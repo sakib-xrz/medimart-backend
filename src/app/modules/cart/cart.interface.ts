@@ -4,5 +4,5 @@ type CartProduct = {
 };
 
 export interface CartInterface {
-  products: CartProduct[];
+  cart_items: CartProduct[];
 }
