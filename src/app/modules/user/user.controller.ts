@@ -5,7 +5,6 @@ import UserService from './user.service';
 
 const GetMyProfile = catchAsync(async (req, res) => {
   const user = req.user;
-
   const result = await UserService.GetMyProfile(user);
 
   sendResponse(res, {

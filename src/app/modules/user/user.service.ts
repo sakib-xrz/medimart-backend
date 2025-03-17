@@ -7,8 +7,9 @@ import QueryBuilder from '../../builder/QueryBuilder';
 const GetMyProfile = async (user: JwtPayload) => {
   const result = await User.findOne({
     email: user.email,
-    is_blocked: false,
-  }).select('-is_blocked -createdAt -updatedAt');
+    status: 'ACTIVE',
+    is_deleted: false,
+  }).select('-status -is_deleted -createdAt -updatedAt');
 
   if (!result) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found');

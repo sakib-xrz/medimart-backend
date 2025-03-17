@@ -19,8 +19,9 @@ const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
 const GetMyProfile = (user) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_model_1.User.findOne({
         email: user.email,
-        is_blocked: false,
-    }).select('-is_blocked -createdAt -updatedAt');
+        status: 'ACTIVE',
+        is_deleted: false,
+    }).select('-status -is_deleted -createdAt -updatedAt');
     if (!result) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found');
     }
