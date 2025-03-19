@@ -10,7 +10,7 @@ const OrderSchema = new mongoose.Schema<OrderInterface>(
       required: true,
       unique: true,
     },
-    user_id: {
+    customer_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,

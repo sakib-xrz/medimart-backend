@@ -24,8 +24,8 @@ type OrderItems = {
 
 export interface OrderInterface {
   order_id: string;
-  user_id: mongoose.Types.ObjectId;
-  products: OrderItems[];
+  customer_id: mongoose.Types.ObjectId;
+  products: OrderItems[] | string;
   customer_name: string;
   customer_email: string;
   customer_phone: string;
