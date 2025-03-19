@@ -8,10 +8,10 @@ const OrderStatus = [
     'CANCELLED',
 ];
 const PaymentStatus = ['PENDING', 'PAID', 'FAILED', 'CANCELLED'];
-const ShippingCity = ['INSIDE_DHAKA', 'OUTSIDE_DHAKA'];
+const PaymentMethod = ['sslcommerz', 'cash_on_delivery'];
 const OrderConstants = {
     OrderStatus,
     PaymentStatus,
-    ShippingCity,
+    PaymentMethod,
 };
 exports.default = OrderConstants;

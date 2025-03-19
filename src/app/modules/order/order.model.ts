@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { OrderInterface } from './order.interface';
 import OrderConstants from './order.constant';
+import ProductConstants from '../product/product.constant';
 
 const OrderSchema = new mongoose.Schema<OrderInterface>(
   {
@@ -12,6 +13,47 @@ const OrderSchema = new mongoose.Schema<OrderInterface>(
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
+      required: true,
+    },
+    products: {
+      type: [
+        {
+          product_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product',
+            required: true,
+          },
+          name: {
+            type: String,
+            required: true,
+          },
+          dosage: {
+            type: String,
+          },
+          quantity: {
+            type: Number,
+            required: true,
+          },
+          price: {
+            type: Number,
+            required: true,
+          },
+          discount: {
+            type: Number,
+            default: 0,
+            required: true,
+          },
+          discount_type: {
+            type: String,
+            enum: ProductConstants.DiscountType,
+            default: 'PERCENTAGE',
+          },
+          requires_prescription: {
+            type: Boolean,
+            default: false,
+          },
+        },
+      ],
       required: true,
     },
     customer_name: {
@@ -26,14 +68,29 @@ const OrderSchema = new mongoose.Schema<OrderInterface>(
       type: String,
       required: true,
     },
-    shipping_address: {
+    address: {
       type: String,
       required: true,
     },
-    shipping_city: {
+    city: {
       type: String,
-      enum: OrderConstants.ShippingCity,
-      default: 'INSIDE_DHAKA',
+      required: true,
+    },
+    postal_code: {
+      type: String,
+      required: true,
+    },
+    notes: {
+      type: String,
+    },
+    payment_method: {
+      type: String,
+      enum: OrderConstants.PaymentMethod,
+      default: 'sslcommerz',
+      required: true,
+    },
+    prescription: {
+      type: String,
     },
     order_status: {
       type: String,
