@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-type PaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELLED';
+type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED' | 'CANCELLED';
 
 export interface PaymentInterface {
   order_id: mongoose.Types.ObjectId;

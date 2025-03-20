@@ -1,4 +1,4 @@
-const Status = ['PENDING', 'SUCCESS', 'FAILED', 'CANCELLED'];
+const Status = ['PENDING', 'PAID', 'FAILED', 'CANCELLED'];
 
 const PaymentConstants = { Status };
 
