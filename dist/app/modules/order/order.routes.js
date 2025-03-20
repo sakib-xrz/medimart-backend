@@ -12,4 +12,5 @@ const router = express_1.default.Router();
 router
     .route('/')
     .post((0, auth_1.default)('CUSTOMER'), handelFile_1.upload.single('prescription'), order_controller_1.default.CreateProduct);
+router.route('/my-orders').get((0, auth_1.default)('CUSTOMER'), order_controller_1.default.GetMyOrders);
 exports.OrderRoutes = router;

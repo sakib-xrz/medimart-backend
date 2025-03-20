@@ -192,6 +192,13 @@ const CreateOrder = async (
   }
 };
 
-const OrderService = { CreateOrder };
+const GetMyOrders = async (user: JwtPayload) => {
+  const orders = await Order.find({
+    customer_id: user._id,
+  });
+  return orders;
+};
+
+const OrderService = { CreateOrder, GetMyOrders };
 
 export default OrderService;

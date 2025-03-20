@@ -19,6 +19,18 @@ const CreateProduct = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const OrderController = { CreateProduct };
+const GetMyOrders = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user;
+  const result = await OrderService.GetMyOrders(user);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Orders fetched successfully',
+    data: result,
+  });
+});
+
+const OrderController = { CreateProduct, GetMyOrders };
 
 export default OrderController;

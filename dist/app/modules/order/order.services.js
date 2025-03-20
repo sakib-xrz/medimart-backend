@@ -136,5 +136,11 @@ const CreateOrder = (payload, file, user) => __awaiter(void 0, void 0, void 0, f
         throw error;
     }
 });
-const OrderService = { CreateOrder };
+const GetMyOrders = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const orders = yield order_model_1.Order.find({
+        customer_id: user._id,
+    });
+    return orders;
+});
+const OrderService = { CreateOrder, GetMyOrders };
 exports.default = OrderService;

@@ -13,4 +13,6 @@ router
     OrderController.CreateProduct,
   );
 
+router.route('/my-orders').get(auth('CUSTOMER'), OrderController.GetMyOrders);
+
 export const OrderRoutes = router;
