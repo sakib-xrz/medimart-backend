@@ -16,7 +16,7 @@ router
 router.route('/my-orders').get(auth('CUSTOMER'), OrderController.GetMyOrders);
 
 router
-  .route('/my-order/:id')
+  .route('/my-orders/:id')
   .get(auth('CUSTOMER'), OrderController.GetMyOrderById);
 
 export const OrderRoutes = router;
