@@ -115,7 +115,7 @@ const VerifyPayment = async (payload) => {
     throw new AppError(httpStatus.NOT_FOUND, 'Order not found');
   }
 
-  return `${config.frontend_base_url}/${config.payment.success_url}?order_id=${order.order_id}&transaction_id=${order.transaction_id}`;
+  return `${config.frontend_base_url}/${config.payment.success_url}?order_id=${order.order_id}`;
 };
 
 const PaymentService = { CreatePaymentIntent, VerifyPayment };

@@ -99,7 +99,7 @@ const VerifyPayment = (payload) => __awaiter(void 0, void 0, void 0, function* (
     if (!order) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Order not found');
     }
-    return `${config_1.default.frontend_base_url}/${config_1.default.payment.success_url}?order_id=${order.order_id}&transaction_id=${order.transaction_id}`;
+    return `${config_1.default.frontend_base_url}/${config_1.default.payment.success_url}?order_id=${order.order_id}`;
 });
 const PaymentService = { CreatePaymentIntent, VerifyPayment };
 exports.default = PaymentService;
