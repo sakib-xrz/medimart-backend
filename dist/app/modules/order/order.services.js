@@ -142,5 +142,15 @@ const GetMyOrders = (user) => __awaiter(void 0, void 0, void 0, function* () {
     });
     return orders;
 });
-const OrderService = { CreateOrder, GetMyOrders };
+const GetMyOrderById = (id, user) => __awaiter(void 0, void 0, void 0, function* () {
+    const order = yield order_model_1.Order.findOne({
+        order_id: id,
+        customer_id: user._id,
+    });
+    if (!order) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Order not found');
+    }
+    return order;
+});
+const OrderService = { CreateOrder, GetMyOrders, GetMyOrderById };
 exports.default = OrderService;

@@ -13,4 +13,7 @@ router
     .route('/')
     .post((0, auth_1.default)('CUSTOMER'), handelFile_1.upload.single('prescription'), order_controller_1.default.CreateProduct);
 router.route('/my-orders').get((0, auth_1.default)('CUSTOMER'), order_controller_1.default.GetMyOrders);
+router
+    .route('/my-order/:id')
+    .get((0, auth_1.default)('CUSTOMER'), order_controller_1.default.GetMyOrderById);
 exports.OrderRoutes = router;

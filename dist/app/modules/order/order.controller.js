@@ -38,5 +38,16 @@ const GetMyOrders = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
         data: result,
     });
 }));
-const OrderController = { CreateProduct, GetMyOrders };
+const GetMyOrderById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const { id } = req.params;
+    const result = yield order_services_1.default.GetMyOrderById(id, user);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Order fetched successfully',
+        data: result,
+    });
+}));
+const OrderController = { CreateProduct, GetMyOrders, GetMyOrderById };
 exports.default = OrderController;

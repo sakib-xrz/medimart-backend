@@ -199,6 +199,17 @@ const GetMyOrders = async (user: JwtPayload) => {
   return orders;
 };
 
-const OrderService = { CreateOrder, GetMyOrders };
+const GetMyOrderById = async (id: string, user: JwtPayload) => {
+  const order = await Order.findOne({
+    order_id: id,
+    customer_id: user._id,
+  });
+  if (!order) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  return order;
+};
+
+const OrderService = { CreateOrder, GetMyOrders, GetMyOrderById };
 
 export default OrderService;
