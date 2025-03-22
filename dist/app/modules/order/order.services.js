@@ -139,7 +139,7 @@ const CreateOrder = (payload, file, user) => __awaiter(void 0, void 0, void 0, f
 const GetMyOrders = (user) => __awaiter(void 0, void 0, void 0, function* () {
     const orders = yield order_model_1.Order.find({
         customer_id: user._id,
-    });
+    }).sort({ createdAt: -1 });
     return orders;
 });
 const GetMyOrderById = (id, user) => __awaiter(void 0, void 0, void 0, function* () {

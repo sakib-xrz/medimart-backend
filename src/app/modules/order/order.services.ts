@@ -195,7 +195,7 @@ const CreateOrder = async (
 const GetMyOrders = async (user: JwtPayload) => {
   const orders = await Order.find({
     customer_id: user._id,
-  });
+  }).sort({ createdAt: -1 });
   return orders;
 };
 
