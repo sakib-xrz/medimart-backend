@@ -117,29 +117,6 @@ const OrderSchema = new mongoose.Schema<OrderInterface>(
       type: Number,
       required: true,
     },
-    status_history: {
-      type: [
-        {
-          status: {
-            type: String,
-            enum: OrderConstants.OrderStatus,
-            required: true,
-          },
-          timestamp: {
-            type: Date,
-            required: true,
-          },
-        },
-      ],
-      default: function () {
-        return [
-          {
-            status: 'PLACED',
-            timestamp: new Date(),
-          },
-        ];
-      },
-    },
   },
   {
     timestamps: true,

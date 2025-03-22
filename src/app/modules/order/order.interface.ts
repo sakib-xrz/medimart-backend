@@ -41,8 +41,4 @@ export interface OrderInterface {
   subtotal: number;
   delivery_charge: number;
   grand_total: number;
-  status_history: {
-    status: OrderStatus;
-    timestamp: Date;
-  }[];
 }
