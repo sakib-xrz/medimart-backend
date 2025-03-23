@@ -90,7 +90,7 @@ const GetAllProducts = async (query: Record<string, unknown>) => {
   const queryBuilder = new QueryBuilder(Product.find(), query);
 
   const productsQuery = queryBuilder
-    .search(['name', 'category'])
+    .search(['name', 'category', 'slug'])
     .filter()
     .sort()
     .fields()

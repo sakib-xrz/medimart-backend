@@ -69,7 +69,7 @@ const GetAllProducts = (query) => __awaiter(void 0, void 0, void 0, function* ()
     query = Object.assign(Object.assign({}, query), { fields: '-pack_size -manufacturer -createdAt -updatedAt -is_deleted -__v', is_deleted: false });
     const queryBuilder = new QueryBuilder_1.default(product_model_1.Product.find(), query);
     const productsQuery = queryBuilder
-        .search(['name', 'category'])
+        .search(['name', 'category', 'slug'])
         .filter()
         .sort()
         .fields()
