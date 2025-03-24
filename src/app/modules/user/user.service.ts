@@ -37,6 +37,8 @@ const GetAllCustomers = async (query: Record<string, unknown>) => {
 
   const orders = await Order.find({
     customer_id: { $in: users.map((customer) => customer._id) },
+    order_status: { $nin: ['CANCELLED'] },
+    payment_status: { $nin: ['FAILED', 'CANCELLED'] },
   });
 
   const customersWithOrders = users.map((customer) => {

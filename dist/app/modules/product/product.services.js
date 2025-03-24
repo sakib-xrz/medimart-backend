@@ -95,6 +95,13 @@ const UpdateProduct = (productId, updates) => __awaiter(void 0, void 0, void 0, 
     if (!isProductExists || isProductExists.is_deleted) {
         throw new AppError_1.default(404, 'Product not found');
     }
+    if (updates === null || updates === void 0 ? void 0 : updates.category) {
+        updates.category_slug = (0, slugify_1.default)(updates.category, {
+            lower: true,
+            trim: true,
+            remove: /[*+~.()'"!:@]/g,
+        });
+    }
     const updatedProduct = yield product_model_1.Product.findByIdAndUpdate(productId, updates, {
         new: true,
         runValidators: true,

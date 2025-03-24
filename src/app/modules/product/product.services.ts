@@ -130,6 +130,14 @@ const UpdateProduct = async (
     throw new AppError(404, 'Product not found');
   }
 
+  if (updates?.category) {
+    updates.category_slug = slugify(updates.category, {
+      lower: true,
+      trim: true,
+      remove: /[*+~.()'"!:@]/g,
+    });
+  }
+
   const updatedProduct = await Product.findByIdAndUpdate(productId, updates, {
     new: true,
     runValidators: true,
