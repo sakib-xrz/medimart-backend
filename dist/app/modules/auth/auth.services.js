@@ -27,6 +27,10 @@ const Login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     if (is_blocked) {
         throw new AppError_1.default(http_status_1.default.FORBIDDEN, 'User is blocked');
     }
+    const is_deleted = user === null || user === void 0 ? void 0 : user.is_deleted;
+    if (is_deleted) {
+        throw new AppError_1.default(http_status_1.default.FORBIDDEN, 'User is deleted');
+    }
     const isPasswordMatched = yield user_model_1.User.isPasswordMatched(payload.password, user.password);
     if (!isPasswordMatched) {
         throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, 'Invalid password');

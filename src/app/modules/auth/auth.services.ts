@@ -20,6 +20,12 @@ const Login = async (payload: LoginType) => {
     throw new AppError(httpStatus.FORBIDDEN, 'User is blocked');
   }
 
+  const is_deleted = user?.is_deleted;
+
+  if (is_deleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'User is deleted');
+  }
+
   const isPasswordMatched = await User.isPasswordMatched(
     payload.password,
     user.password,
