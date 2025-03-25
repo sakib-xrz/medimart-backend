@@ -12,5 +12,6 @@ router
     .route('/profile')
     .get((0, auth_1.default)('ADMIN', 'CUSTOMER'), user_controller_1.default.GetMyProfile);
 router.get('/', (0, auth_1.default)('ADMIN'), user_controller_1.default.GetAllCustomers);
-router.patch('/:targatedUserId/block', (0, auth_1.default)('ADMIN'), user_controller_1.default.BlockUser);
+router.patch('/:id/status', (0, auth_1.default)('ADMIN'), user_controller_1.default.UpdateUserStatus);
+router.delete('/:id', (0, auth_1.default)('ADMIN'), user_controller_1.default.DeleteUser);
 exports.UserRoutes = router;

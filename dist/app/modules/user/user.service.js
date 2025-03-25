@@ -55,17 +55,29 @@ const GetAllCustomers = (query) => __awaiter(void 0, void 0, void 0, function* (
         data: customersWithOrders,
     };
 });
-const BlockUser = (targetedUserId, user) => __awaiter(void 0, void 0, void 0, function* () {
-    const targetedUser = yield user_model_1.User.findById(targetedUserId);
+const UpdateUserStatus = (id, status) => __awaiter(void 0, void 0, void 0, function* () {
+    const targetedUser = yield user_model_1.User.findById(id);
     if (!targetedUser) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found');
     }
-    if (targetedUser._id.toString() === user._id.toString()) {
-        throw new AppError_1.default(http_status_1.default.FORBIDDEN, 'You can not block yourself');
+    const result = yield user_model_1.User.findByIdAndUpdate(id, {
+        status: status,
+    });
+    return result;
+});
+const DeleteUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const targetedUser = yield user_model_1.User.findById(id);
+    if (!targetedUser) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found');
     }
-    yield user_model_1.User.findByIdAndUpdate(targetedUserId, {
-        status: targetedUser.status === 'BLOCKED' ? 'ACTIVE' : 'BLOCKED',
+    yield user_model_1.User.findByIdAndUpdate(id, {
+        is_deleted: true,
     });
 });
-const UserService = { GetMyProfile, GetAllCustomers, BlockUser };
+const UserService = {
+    GetMyProfile,
+    GetAllCustomers,
+    UpdateUserStatus,
+    DeleteUser,
+};
 exports.default = UserService;

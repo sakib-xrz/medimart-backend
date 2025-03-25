@@ -10,6 +10,8 @@ router
 
 router.get('/', auth('ADMIN'), UserController.GetAllCustomers);
 
-router.patch('/:targatedUserId/block', auth('ADMIN'), UserController.BlockUser);
+router.patch('/:id/status', auth('ADMIN'), UserController.UpdateUserStatus);
+
+router.delete('/:id', auth('ADMIN'), UserController.DeleteUser);
 
 export const UserRoutes = router;

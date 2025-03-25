@@ -67,22 +67,37 @@ const GetAllCustomers = async (query: Record<string, unknown>) => {
   };
 };
 
-const BlockUser = async (targetedUserId: string, user: JwtPayload) => {
-  const targetedUser = await User.findById(targetedUserId);
+const UpdateUserStatus = async (id: string, status: string) => {
+  const targetedUser = await User.findById(id);
 
   if (!targetedUser) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   }
 
-  if (targetedUser._id.toString() === user._id.toString()) {
-    throw new AppError(httpStatus.FORBIDDEN, 'You can not block yourself');
+  const result = await User.findByIdAndUpdate(id, {
+    status: status,
+  });
+
+  return result;
+};
+
+const DeleteUser = async (id: string) => {
+  const targetedUser = await User.findById(id);
+
+  if (!targetedUser) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   }
 
-  await User.findByIdAndUpdate(targetedUserId, {
-    status: targetedUser.status === 'BLOCKED' ? 'ACTIVE' : 'BLOCKED',
+  await User.findByIdAndUpdate(id, {
+    is_deleted: true,
   });
 };
 
-const UserService = { GetMyProfile, GetAllCustomers, BlockUser };
+const UserService = {
+  GetMyProfile,
+  GetAllCustomers,
+  UpdateUserStatus,
+  DeleteUser,
+};
 
 export default UserService;

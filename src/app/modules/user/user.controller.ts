@@ -27,11 +27,24 @@ const GetAllCustomers = catchAsync(async (req, res) => {
   });
 });
 
-const BlockUser = catchAsync(async (req, res) => {
-  const { targatedUserId } = req.params;
-  const user = req.user;
+const UpdateUserStatus = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
 
-  await UserService.BlockUser(targatedUserId, user);
+  const result = await UserService.UpdateUserStatus(id, status);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'User status updated successfully',
+    data: result,
+  });
+});
+
+const DeleteUser = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  await UserService.DeleteUser(id);
 
   sendResponse(res, {
     success: true,
@@ -39,6 +52,10 @@ const BlockUser = catchAsync(async (req, res) => {
   });
 });
 
-const UserController = { GetMyProfile, BlockUser, GetAllCustomers };
-
+const UserController = {
+  GetMyProfile,
+  GetAllCustomers,
+  UpdateUserStatus,
+  DeleteUser,
+};
 export default UserController;
