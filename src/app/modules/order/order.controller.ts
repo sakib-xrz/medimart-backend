@@ -44,6 +44,23 @@ const GetMyOrderById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const OrderController = { CreateProduct, GetMyOrders, GetMyOrderById };
+const GetAllOrders = catchAsync(async (req: Request, res: Response) => {
+  const query = req.query;
+  const result = await OrderService.GetAllOrders(query);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Orders fetched successfully',
+    data: result,
+  });
+});
+
+const OrderController = {
+  CreateProduct,
+  GetMyOrders,
+  GetMyOrderById,
+  GetAllOrders,
+};
 
 export default OrderController;

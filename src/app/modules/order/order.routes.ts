@@ -13,6 +13,8 @@ router
     OrderController.CreateProduct,
   );
 
+router.route('/admin').get(auth('ADMIN'), OrderController.GetAllOrders);
+
 router.route('/my-orders').get(auth('CUSTOMER'), OrderController.GetMyOrders);
 
 router

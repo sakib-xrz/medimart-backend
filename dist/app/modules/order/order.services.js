@@ -21,6 +21,7 @@ const handelFile_1 = require("../../utils/handelFile");
 const order_utils_1 = __importDefault(require("./order.utils"));
 const order_model_1 = require("./order.model");
 const payment_model_1 = require("../payment/payment.model");
+const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
 const CreateOrder = (payload, file, user) => __awaiter(void 0, void 0, void 0, function* () {
     const session = yield mongoose_1.default.startSession();
     session.startTransaction();
@@ -152,5 +153,20 @@ const GetMyOrderById = (id, user) => __awaiter(void 0, void 0, void 0, function*
     }
     return order;
 });
-const OrderService = { CreateOrder, GetMyOrders, GetMyOrderById };
+const GetAllOrders = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const queryBuilder = new QueryBuilder_1.default(order_model_1.Order.find(), query);
+    const ordersQuery = queryBuilder
+        .search(['order_id', 'customer_name', 'customer_email', 'customer_phone'])
+        .filter()
+        .sort()
+        .fields()
+        .paginate();
+    const total = yield queryBuilder.getCountQuery();
+    const orders = yield ordersQuery.modelQuery;
+    return {
+        meta: Object.assign({ total }, queryBuilder.getPaginationInfo()),
+        data: orders,
+    };
+});
+const OrderService = { CreateOrder, GetMyOrders, GetMyOrderById, GetAllOrders };
 exports.default = OrderService;

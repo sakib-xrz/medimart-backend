@@ -10,6 +10,7 @@ import { Readable } from 'stream';
 import OrderUtils from './order.utils';
 import { Order } from './order.model';
 import { Payment } from '../payment/payment.model';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 interface FileInterface {
   fieldname: string;
@@ -210,6 +211,27 @@ const GetMyOrderById = async (id: string, user: JwtPayload) => {
   return order;
 };
 
-const OrderService = { CreateOrder, GetMyOrders, GetMyOrderById };
+const GetAllOrders = async (query: Record<string, unknown>) => {
+  const queryBuilder = new QueryBuilder(Order.find(), query);
+
+  const ordersQuery = queryBuilder
+    .search(['order_id', 'customer_name', 'customer_email', 'customer_phone'])
+    .filter()
+    .sort()
+    .fields()
+    .paginate();
+
+  const total = await queryBuilder.getCountQuery();
+  const orders = await ordersQuery.modelQuery;
+
+  return {
+    meta: {
+      total,
+      ...queryBuilder.getPaginationInfo(),
+    },
+    data: orders,
+  };
+};
+const OrderService = { CreateOrder, GetMyOrders, GetMyOrderById, GetAllOrders };
 
 export default OrderService;
