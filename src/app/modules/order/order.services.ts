@@ -247,17 +247,17 @@ const UpdateOrderStatus = async (id: string, status: OrderStatus) => {
   const currentStatus = order.order_status;
 
   const invalidTransitions: Record<OrderStatus, OrderStatus[]> = {
-    DELIVERED: ['PLACED', 'CONFIRMED', 'SHIPPED', 'CANCELLED'],
-    CANCELLED: ['DELIVERED', 'SHIPPED'],
-    SHIPPED: ['PLACED'],
     PLACED: [],
     CONFIRMED: [],
+    SHIPPED: ['PLACED', 'CONFIRMED'],
+    DELIVERED: ['PLACED', 'CONFIRMED', 'SHIPPED', 'CANCELLED'],
+    CANCELLED: ['DELIVERED', 'SHIPPED'],
   };
 
-  if (invalidTransitions[status as OrderStatus]?.includes(currentStatus)) {
+  if (invalidTransitions[currentStatus as OrderStatus]?.includes(status)) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      `Invalid order status transition from ${currentStatus} to ${status}`,
+      `Invalid status change "${currentStatus}" → "${status}"`,
     );
   }
 
@@ -272,7 +272,7 @@ const UpdateOrderStatus = async (id: string, status: OrderStatus) => {
       ) {
         throw new AppError(
           httpStatus.BAD_REQUEST,
-          'Cannot confirm order: Prescription required but not provided',
+          'Cannot confirm order without prescription',
         );
       }
       break;
@@ -284,7 +284,7 @@ const UpdateOrderStatus = async (id: string, status: OrderStatus) => {
       ) {
         throw new AppError(
           httpStatus.BAD_REQUEST,
-          'Cannot ship order: Payment pending',
+          'Cannot ship an order with incomplete payment',
         );
       }
       break;

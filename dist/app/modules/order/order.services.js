@@ -180,27 +180,27 @@ const UpdateOrderStatus = (id, status) => __awaiter(void 0, void 0, void 0, func
     }
     const currentStatus = order.order_status;
     const invalidTransitions = {
-        DELIVERED: ['PLACED', 'CONFIRMED', 'SHIPPED', 'CANCELLED'],
-        CANCELLED: ['DELIVERED', 'SHIPPED'],
-        SHIPPED: ['PLACED'],
         PLACED: [],
         CONFIRMED: [],
+        SHIPPED: ['PLACED', 'CONFIRMED'],
+        DELIVERED: ['PLACED', 'CONFIRMED', 'SHIPPED', 'CANCELLED'],
+        CANCELLED: ['DELIVERED', 'SHIPPED'],
     };
-    if ((_a = invalidTransitions[status]) === null || _a === void 0 ? void 0 : _a.includes(currentStatus)) {
-        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, `Invalid order status transition from ${currentStatus} to ${status}`);
+    if ((_a = invalidTransitions[currentStatus]) === null || _a === void 0 ? void 0 : _a.includes(status)) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, `Invalid status change "${currentStatus}" → "${status}"`);
     }
     switch (status) {
         case 'CONFIRMED':
             if (Array.isArray(order.products) &&
                 order.products.some((product) => product.requires_prescription) &&
                 !order.prescription) {
-                throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Cannot confirm order: Prescription required but not provided');
+                throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Cannot confirm order without prescription');
             }
             break;
         case 'SHIPPED':
             if (order.payment_method !== 'cash_on_delivery' &&
                 order.payment_status !== 'PAID') {
-                throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Cannot ship order: Payment pending');
+                throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Cannot ship an order with incomplete payment');
             }
             break;
         case 'DELIVERED':
