@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { JwtPayload } from 'jsonwebtoken';
-import { OrderInterface } from './order.interface';
+import { OrderInterface, OrderItems, OrderStatus } from './order.interface';
 import { User } from '../user/user.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
@@ -11,6 +11,7 @@ import OrderUtils from './order.utils';
 import { Order } from './order.model';
 import { Payment } from '../payment/payment.model';
 import QueryBuilder from '../../builder/QueryBuilder';
+import OrderConstants from './order.constant';
 
 interface FileInterface {
   fieldname: string;
@@ -232,6 +233,87 @@ const GetAllOrders = async (query: Record<string, unknown>) => {
     data: orders,
   };
 };
-const OrderService = { CreateOrder, GetMyOrders, GetMyOrderById, GetAllOrders };
+
+const UpdateOrderStatus = async (id: string, status: OrderStatus) => {
+  const order = await Order.findById(id);
+  if (!order) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+
+  if (!OrderConstants.OrderStatus.includes(status)) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Invalid order status');
+  }
+
+  const currentStatus = order.order_status;
+
+  const invalidTransitions: Record<OrderStatus, OrderStatus[]> = {
+    DELIVERED: ['PLACED', 'CONFIRMED', 'SHIPPED', 'CANCELLED'],
+    CANCELLED: ['DELIVERED', 'SHIPPED'],
+    SHIPPED: ['PLACED'],
+    PLACED: [],
+    CONFIRMED: [],
+  };
+
+  if (invalidTransitions[status as OrderStatus]?.includes(currentStatus)) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Invalid order status transition from ${currentStatus} to ${status}`,
+    );
+  }
+
+  switch (status) {
+    case 'CONFIRMED':
+      if (
+        Array.isArray(order.products) &&
+        order.products.some(
+          (product: OrderItems) => product.requires_prescription,
+        ) &&
+        !order.prescription
+      ) {
+        throw new AppError(
+          httpStatus.BAD_REQUEST,
+          'Cannot confirm order: Prescription required but not provided',
+        );
+      }
+      break;
+
+    case 'SHIPPED':
+      if (
+        order.payment_method !== 'cash_on_delivery' &&
+        order.payment_status !== 'PAID'
+      ) {
+        throw new AppError(
+          httpStatus.BAD_REQUEST,
+          'Cannot ship order: Payment pending',
+        );
+      }
+      break;
+
+    case 'DELIVERED':
+      if (order.payment_method === 'cash_on_delivery') {
+        order.payment_status = 'PAID';
+      }
+      break;
+
+    case 'CANCELLED':
+      if (order.payment_status === 'PAID') {
+        order.payment_status = 'CANCELLED';
+      }
+      break;
+  }
+
+  order.order_status = status;
+
+  const updatedOrder = await order.save();
+  return updatedOrder;
+};
+
+const OrderService = {
+  CreateOrder,
+  GetMyOrders,
+  GetMyOrderById,
+  GetAllOrders,
+  UpdateOrderStatus,
+};
 
 export default OrderService;

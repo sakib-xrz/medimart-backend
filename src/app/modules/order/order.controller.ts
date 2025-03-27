@@ -57,11 +57,25 @@ const GetAllOrders = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const UpdateOrderStatus = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  const result = await OrderService.UpdateOrderStatus(id, status);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Order status updated successfully',
+    data: result,
+  });
+});
+
 const OrderController = {
   CreateProduct,
   GetMyOrders,
   GetMyOrderById,
   GetAllOrders,
+  UpdateOrderStatus,
 };
 
 export default OrderController;

@@ -22,6 +22,7 @@ const order_utils_1 = __importDefault(require("./order.utils"));
 const order_model_1 = require("./order.model");
 const payment_model_1 = require("../payment/payment.model");
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const order_constant_1 = __importDefault(require("./order.constant"));
 const CreateOrder = (payload, file, user) => __awaiter(void 0, void 0, void 0, function* () {
     const session = yield mongoose_1.default.startSession();
     session.startTransaction();
@@ -168,5 +169,60 @@ const GetAllOrders = (query) => __awaiter(void 0, void 0, void 0, function* () {
         data: orders,
     };
 });
-const OrderService = { CreateOrder, GetMyOrders, GetMyOrderById, GetAllOrders };
+const UpdateOrderStatus = (id, status) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const order = yield order_model_1.Order.findById(id);
+    if (!order) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Order not found');
+    }
+    if (!order_constant_1.default.OrderStatus.includes(status)) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Invalid order status');
+    }
+    const currentStatus = order.order_status;
+    const invalidTransitions = {
+        DELIVERED: ['PLACED', 'CONFIRMED', 'SHIPPED', 'CANCELLED'],
+        CANCELLED: ['DELIVERED', 'SHIPPED'],
+        SHIPPED: ['PLACED'],
+        PLACED: [],
+        CONFIRMED: [],
+    };
+    if ((_a = invalidTransitions[status]) === null || _a === void 0 ? void 0 : _a.includes(currentStatus)) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, `Invalid order status transition from ${currentStatus} to ${status}`);
+    }
+    switch (status) {
+        case 'CONFIRMED':
+            if (Array.isArray(order.products) &&
+                order.products.some((product) => product.requires_prescription) &&
+                !order.prescription) {
+                throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Cannot confirm order: Prescription required but not provided');
+            }
+            break;
+        case 'SHIPPED':
+            if (order.payment_method !== 'cash_on_delivery' &&
+                order.payment_status !== 'PAID') {
+                throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Cannot ship order: Payment pending');
+            }
+            break;
+        case 'DELIVERED':
+            if (order.payment_method === 'cash_on_delivery') {
+                order.payment_status = 'PAID';
+            }
+            break;
+        case 'CANCELLED':
+            if (order.payment_status === 'PAID') {
+                order.payment_status = 'CANCELLED';
+            }
+            break;
+    }
+    order.order_status = status;
+    const updatedOrder = yield order.save();
+    return updatedOrder;
+});
+const OrderService = {
+    CreateOrder,
+    GetMyOrders,
+    GetMyOrderById,
+    GetAllOrders,
+    UpdateOrderStatus,
+};
 exports.default = OrderService;

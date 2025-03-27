@@ -12,6 +12,9 @@ const router = express_1.default.Router();
 router
     .route('/')
     .post((0, auth_1.default)('CUSTOMER'), handelFile_1.upload.single('prescription'), order_controller_1.default.CreateProduct);
+router
+    .route('/:id/status')
+    .patch((0, auth_1.default)('ADMIN'), order_controller_1.default.UpdateOrderStatus);
 router.route('/admin').get((0, auth_1.default)('ADMIN'), order_controller_1.default.GetAllOrders);
 router.route('/my-orders').get((0, auth_1.default)('CUSTOMER'), order_controller_1.default.GetMyOrders);
 router

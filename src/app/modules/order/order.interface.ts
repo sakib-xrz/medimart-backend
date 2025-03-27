@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-type OrderStatus =
+export type OrderStatus =
   | 'PLACED'
   | 'CONFIRMED'
   | 'SHIPPED'
@@ -11,7 +11,7 @@ type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED' | 'CANCELLED';
 
 type PaymentMethod = 'sslcommerz' | 'cash_on_delivery';
 
-type OrderItems = {
+export type OrderItems = {
   product_id: mongoose.Types.ObjectId;
   name: string;
   dosage?: string;

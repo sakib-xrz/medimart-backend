@@ -13,6 +13,10 @@ router
     OrderController.CreateProduct,
   );
 
+router
+  .route('/:id/status')
+  .patch(auth('ADMIN'), OrderController.UpdateOrderStatus);
+
 router.route('/admin').get(auth('ADMIN'), OrderController.GetAllOrders);
 
 router.route('/my-orders').get(auth('CUSTOMER'), OrderController.GetMyOrders);
