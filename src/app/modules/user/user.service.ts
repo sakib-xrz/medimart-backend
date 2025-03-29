@@ -37,18 +37,16 @@ const GetAllCustomers = async (query: Record<string, unknown>) => {
 
   const orders = await Order.find({
     customer_id: { $in: users.map((customer) => customer._id) },
-    order_status: { $nin: ['CANCELLED'] },
-    payment_status: { $nin: ['FAILED', 'CANCELLED'] },
   });
 
   const customersWithOrders = users.map((customer) => {
     const customerOrders = orders.filter(
       (order) => order.customer_id.toString() === customer._id.toString(),
     );
-    const total_spent = customerOrders.reduce(
-      (acc, order) => acc + order.grand_total,
-      0,
-    );
+
+    const total_spent = customerOrders
+      .filter((order) => order.payment_status === 'PAID')
+      .reduce((acc, order) => acc + order.grand_total, 0);
     const total_orders = customerOrders.length;
 
     return {

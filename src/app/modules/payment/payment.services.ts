@@ -69,10 +69,18 @@ const CreatePaymentIntent = async (order_id: string) => {
 };
 
 const VerifyPayment = async (payload) => {
+  const order = await Order.findOne({
+    transaction_id: payload.tran_id,
+  });
+
+  if (!order) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+
   if (!payload.val_id || payload.status !== 'VALID') {
     if (payload.status === 'FAILED') {
       await PaymentUtils.updatePaymentAndOrderStatus(payload.tran_id, 'FAILED');
-      return `${config.frontend_base_url}/${config.payment.fail_url}`;
+      return `${config.frontend_base_url}/${config.payment.fail_url}?order_id=${order._id}`;
     }
 
     if (payload.status === 'CANCELLED') {
@@ -80,7 +88,7 @@ const VerifyPayment = async (payload) => {
         payload.tran_id,
         'CANCELLED',
       );
-      return `${config.frontend_base_url}/${config.payment.cancel_url}`;
+      return `${config.frontend_base_url}/${config.payment.cancel_url}?order_id=${order._id}`;
     }
 
     throw new AppError(httpStatus.BAD_REQUEST, 'Invalid IPN request');
@@ -98,7 +106,7 @@ const VerifyPayment = async (payload) => {
       'FAILED',
       'FAILED',
     );
-    return `${config.frontend_base_url}/${config.payment.fail_url}`;
+    return `${config.frontend_base_url}/${config.payment.fail_url}?order_id=${order._id}`;
   }
 
   await PaymentUtils.updatePaymentAndOrderStatus(
@@ -107,15 +115,7 @@ const VerifyPayment = async (payload) => {
     response,
   );
 
-  const order = await Order.findOne({
-    transaction_id: response.tran_id,
-  });
-
-  if (!order) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Order not found');
-  }
-
-  return `${config.frontend_base_url}/${config.payment.success_url}?order_id=${order.order_id}`;
+  return `${config.frontend_base_url}/${config.payment.success_url}`;
 };
 
 const PaymentService = { CreatePaymentIntent, VerifyPayment };

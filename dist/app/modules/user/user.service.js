@@ -40,12 +40,12 @@ const GetAllCustomers = (query) => __awaiter(void 0, void 0, void 0, function* (
     const total = yield queryBuilder.getCountQuery();
     const orders = yield order_model_1.Order.find({
         customer_id: { $in: users.map((customer) => customer._id) },
-        order_status: { $nin: ['CANCELLED'] },
-        payment_status: { $nin: ['FAILED', 'CANCELLED'] },
     });
     const customersWithOrders = users.map((customer) => {
         const customerOrders = orders.filter((order) => order.customer_id.toString() === customer._id.toString());
-        const total_spent = customerOrders.reduce((acc, order) => acc + order.grand_total, 0);
+        const total_spent = customerOrders
+            .filter((order) => order.payment_status === 'PAID')
+            .reduce((acc, order) => acc + order.grand_total, 0);
         const total_orders = customerOrders.length;
         return Object.assign(Object.assign({}, customer.toObject()), { total_spent,
             total_orders });

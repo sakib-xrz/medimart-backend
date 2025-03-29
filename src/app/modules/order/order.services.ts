@@ -235,77 +235,106 @@ const GetAllOrders = async (query: Record<string, unknown>) => {
 };
 
 const UpdateOrderStatus = async (id: string, status: OrderStatus) => {
-  const order = await Order.findById(id);
-  if (!order) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Order not found');
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const order = await Order.findById(id).session(session);
+    if (!order) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Order not found');
+    }
+
+    if (!OrderConstants.OrderStatus.includes(status)) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Invalid order status');
+    }
+
+    const currentStatus = order.order_status;
+
+    const invalidTransitions: Record<OrderStatus, OrderStatus[]> = {
+      PLACED: [],
+      CONFIRMED: [],
+      SHIPPED: ['PLACED', 'CONFIRMED'],
+      DELIVERED: ['PLACED', 'CONFIRMED', 'SHIPPED', 'CANCELLED'],
+      CANCELLED: ['DELIVERED', 'SHIPPED'],
+    };
+
+    if (invalidTransitions[currentStatus as OrderStatus]?.includes(status)) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        `Invalid status change "${currentStatus}" → "${status}"`,
+      );
+    }
+
+    switch (status) {
+      case 'CONFIRMED':
+        if (
+          Array.isArray(order.products) &&
+          order.products.some(
+            (product: OrderItems) => product.requires_prescription,
+          ) &&
+          !order.prescription
+        ) {
+          throw new AppError(
+            httpStatus.BAD_REQUEST,
+            'Cannot confirm order without prescription',
+          );
+        }
+        break;
+
+      case 'SHIPPED':
+        if (
+          order.payment_method !== 'cash_on_delivery' &&
+          order.payment_status !== 'PAID'
+        ) {
+          throw new AppError(
+            httpStatus.BAD_REQUEST,
+            'Cannot ship an order with incomplete payment',
+          );
+        }
+        break;
+
+      case 'DELIVERED':
+        if (order.payment_method === 'cash_on_delivery') {
+          order.payment_status = 'PAID';
+        }
+        break;
+
+      case 'CANCELLED':
+        if (order.payment_status === 'PAID') {
+          order.payment_status = 'CANCELLED';
+
+          await Payment.updateOne(
+            { order_id: order._id },
+            { payment_status: 'CANCELLED', payment_gateway_data: null },
+            { session },
+          );
+
+          await Promise.all(
+            Array.isArray(order.products)
+              ? order.products.map((product: OrderItems) =>
+                  Product.updateOne(
+                    { _id: product.product_id },
+                    { $inc: { stock: product.quantity } },
+                    { session },
+                  ),
+                )
+              : [],
+          );
+        }
+        break;
+    }
+
+    order.order_status = status;
+    const updatedOrder = await order.save({ session });
+
+    await session.commitTransaction();
+    return updatedOrder;
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
   }
-
-  if (!OrderConstants.OrderStatus.includes(status)) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Invalid order status');
-  }
-
-  const currentStatus = order.order_status;
-
-  const invalidTransitions: Record<OrderStatus, OrderStatus[]> = {
-    PLACED: [],
-    CONFIRMED: [],
-    SHIPPED: ['PLACED', 'CONFIRMED'],
-    DELIVERED: ['PLACED', 'CONFIRMED', 'SHIPPED', 'CANCELLED'],
-    CANCELLED: ['DELIVERED', 'SHIPPED'],
-  };
-
-  if (invalidTransitions[currentStatus as OrderStatus]?.includes(status)) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      `Invalid status change "${currentStatus}" → "${status}"`,
-    );
-  }
-
-  switch (status) {
-    case 'CONFIRMED':
-      if (
-        Array.isArray(order.products) &&
-        order.products.some(
-          (product: OrderItems) => product.requires_prescription,
-        ) &&
-        !order.prescription
-      ) {
-        throw new AppError(
-          httpStatus.BAD_REQUEST,
-          'Cannot confirm order without prescription',
-        );
-      }
-      break;
-
-    case 'SHIPPED':
-      if (
-        order.payment_method !== 'cash_on_delivery' &&
-        order.payment_status !== 'PAID'
-      ) {
-        throw new AppError(
-          httpStatus.BAD_REQUEST,
-          'Cannot ship an order with incomplete payment',
-        );
-      }
-      break;
-
-    case 'DELIVERED':
-      if (order.payment_method === 'cash_on_delivery') {
-        order.payment_status = 'PAID';
-      }
-      break;
-
-    case 'CANCELLED':
-      if (order.payment_status === 'PAID') {
-        order.payment_status = 'CANCELLED';
-      }
-      break;
-  }
-
-  order.order_status = status;
-
-  const updatedOrder = await order.save();
-  return updatedOrder;
 };
 
 const OrderService = {

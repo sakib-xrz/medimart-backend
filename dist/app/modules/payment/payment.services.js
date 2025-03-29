@@ -73,14 +73,20 @@ const CreatePaymentIntent = (order_id) => __awaiter(void 0, void 0, void 0, func
     return sslResponse.GatewayPageURL;
 });
 const VerifyPayment = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const order = yield order_model_1.Order.findOne({
+        transaction_id: payload.tran_id,
+    });
+    if (!order) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Order not found');
+    }
     if (!payload.val_id || payload.status !== 'VALID') {
         if (payload.status === 'FAILED') {
             yield payment_utils_1.default.updatePaymentAndOrderStatus(payload.tran_id, 'FAILED');
-            return `${config_1.default.frontend_base_url}/${config_1.default.payment.fail_url}`;
+            return `${config_1.default.frontend_base_url}/${config_1.default.payment.fail_url}?order_id=${order._id}`;
         }
         if (payload.status === 'CANCELLED') {
             yield payment_utils_1.default.updatePaymentAndOrderStatus(payload.tran_id, 'CANCELLED');
-            return `${config_1.default.frontend_base_url}/${config_1.default.payment.cancel_url}`;
+            return `${config_1.default.frontend_base_url}/${config_1.default.payment.cancel_url}?order_id=${order._id}`;
         }
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Invalid IPN request');
     }
@@ -90,16 +96,10 @@ const VerifyPayment = (payload) => __awaiter(void 0, void 0, void 0, function* (
     });
     if (response.status !== 'VALID' && response.status !== 'VALIDATED') {
         yield payment_utils_1.default.updatePaymentAndOrderStatus(response.tran_id, 'FAILED', 'FAILED');
-        return `${config_1.default.frontend_base_url}/${config_1.default.payment.fail_url}`;
+        return `${config_1.default.frontend_base_url}/${config_1.default.payment.fail_url}?order_id=${order._id}`;
     }
     yield payment_utils_1.default.updatePaymentAndOrderStatus(response.tran_id, 'PAID', response);
-    const order = yield order_model_1.Order.findOne({
-        transaction_id: response.tran_id,
-    });
-    if (!order) {
-        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Order not found');
-    }
-    return `${config_1.default.frontend_base_url}/${config_1.default.payment.success_url}?order_id=${order.order_id}`;
+    return `${config_1.default.frontend_base_url}/${config_1.default.payment.success_url}`;
 });
 const PaymentService = { CreatePaymentIntent, VerifyPayment };
 exports.default = PaymentService;

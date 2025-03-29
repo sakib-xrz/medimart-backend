@@ -171,52 +171,68 @@ const GetAllOrders = (query) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const UpdateOrderStatus = (id, status) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const order = yield order_model_1.Order.findById(id);
-    if (!order) {
-        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Order not found');
+    const session = yield mongoose_1.default.startSession();
+    session.startTransaction();
+    try {
+        const order = yield order_model_1.Order.findById(id).session(session);
+        if (!order) {
+            throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Order not found');
+        }
+        if (!order_constant_1.default.OrderStatus.includes(status)) {
+            throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Invalid order status');
+        }
+        const currentStatus = order.order_status;
+        const invalidTransitions = {
+            PLACED: [],
+            CONFIRMED: [],
+            SHIPPED: ['PLACED', 'CONFIRMED'],
+            DELIVERED: ['PLACED', 'CONFIRMED', 'SHIPPED', 'CANCELLED'],
+            CANCELLED: ['DELIVERED', 'SHIPPED'],
+        };
+        if ((_a = invalidTransitions[currentStatus]) === null || _a === void 0 ? void 0 : _a.includes(status)) {
+            throw new AppError_1.default(http_status_1.default.BAD_REQUEST, `Invalid status change "${currentStatus}" → "${status}"`);
+        }
+        switch (status) {
+            case 'CONFIRMED':
+                if (Array.isArray(order.products) &&
+                    order.products.some((product) => product.requires_prescription) &&
+                    !order.prescription) {
+                    throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Cannot confirm order without prescription');
+                }
+                break;
+            case 'SHIPPED':
+                if (order.payment_method !== 'cash_on_delivery' &&
+                    order.payment_status !== 'PAID') {
+                    throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Cannot ship an order with incomplete payment');
+                }
+                break;
+            case 'DELIVERED':
+                if (order.payment_method === 'cash_on_delivery') {
+                    order.payment_status = 'PAID';
+                }
+                break;
+            case 'CANCELLED':
+                if (order.payment_status === 'PAID') {
+                    order.payment_status = 'CANCELLED';
+                    yield payment_model_1.Payment.updateOne({ order_id: order._id }, { payment_status: 'CANCELLED', payment_gateway_data: null }, { session });
+                    yield Promise.all(Array.isArray(order.products)
+                        ? order.products.map((product) => product_model_1.Product.updateOne({ _id: product.product_id }, { $inc: { stock: product.quantity } }, { session }))
+                        : []);
+                }
+                break;
+        }
+        order.order_status = status;
+        const updatedOrder = yield order.save({ session });
+        yield session.commitTransaction();
+        return updatedOrder;
     }
-    if (!order_constant_1.default.OrderStatus.includes(status)) {
-        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Invalid order status');
+    catch (error) {
+        yield session.abortTransaction();
+        throw error;
     }
-    const currentStatus = order.order_status;
-    const invalidTransitions = {
-        PLACED: [],
-        CONFIRMED: [],
-        SHIPPED: ['PLACED', 'CONFIRMED'],
-        DELIVERED: ['PLACED', 'CONFIRMED', 'SHIPPED', 'CANCELLED'],
-        CANCELLED: ['DELIVERED', 'SHIPPED'],
-    };
-    if ((_a = invalidTransitions[currentStatus]) === null || _a === void 0 ? void 0 : _a.includes(status)) {
-        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, `Invalid status change "${currentStatus}" → "${status}"`);
+    finally {
+        session.endSession();
     }
-    switch (status) {
-        case 'CONFIRMED':
-            if (Array.isArray(order.products) &&
-                order.products.some((product) => product.requires_prescription) &&
-                !order.prescription) {
-                throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Cannot confirm order without prescription');
-            }
-            break;
-        case 'SHIPPED':
-            if (order.payment_method !== 'cash_on_delivery' &&
-                order.payment_status !== 'PAID') {
-                throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Cannot ship an order with incomplete payment');
-            }
-            break;
-        case 'DELIVERED':
-            if (order.payment_method === 'cash_on_delivery') {
-                order.payment_status = 'PAID';
-            }
-            break;
-        case 'CANCELLED':
-            if (order.payment_status === 'PAID') {
-                order.payment_status = 'CANCELLED';
-            }
-            break;
-    }
-    order.order_status = status;
-    const updatedOrder = yield order.save();
-    return updatedOrder;
 });
 const OrderService = {
     CreateOrder,
