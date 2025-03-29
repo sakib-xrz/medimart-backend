@@ -26,6 +26,46 @@ const getStatsSummary = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
         data: result,
     });
 }));
+const getRevenueSummary = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield dashboard_service_1.DashboardService.getRevenueSummary();
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Revenue summary retrieved successfully',
+        data: result,
+    });
+}));
+const getRecentOrders = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield dashboard_service_1.DashboardService.getRecentOrders();
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Recent orders retrieved successfully',
+        data: result,
+    });
+}));
+const getLowStockProducts = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield dashboard_service_1.DashboardService.getLowStockProducts();
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Low stock products retrieved successfully',
+        data: result,
+    });
+}));
+const getExpiringProducts = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield dashboard_service_1.DashboardService.getExpiringProducts();
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Expiring products retrieved successfully',
+        data: result,
+    });
+}));
 exports.DashboardController = {
     getStatsSummary,
+    getRevenueSummary,
+    getRecentOrders,
+    getLowStockProducts,
+    getExpiringProducts,
 };

@@ -117,6 +117,89 @@ const getStatsSummary = () => __awaiter(void 0, void 0, void 0, function* () {
         },
     };
 });
+const getRevenueSummary = () => __awaiter(void 0, void 0, void 0, function* () {
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 11);
+    twelveMonthsAgo.setDate(1);
+    const monthsInString = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+    ];
+    const revenueData = yield order_model_1.Order.aggregate([
+        {
+            $match: {
+                payment_status: 'PAID',
+                createdAt: { $gte: twelveMonthsAgo },
+            },
+        },
+        {
+            $group: {
+                _id: {
+                    year: { $year: '$createdAt' },
+                    month: { $month: '$createdAt' },
+                },
+                revenue: { $sum: '$grand_total' },
+            },
+        },
+    ]);
+    const revenueMap = new Map(revenueData.map((item) => [item._id.month - 1, item.revenue]));
+    const currentMonth = new Date().getMonth();
+    const allMonthsData = Array.from({ length: 12 }, (_, index) => {
+        const monthIndex = (currentMonth + 1 + index) % 12;
+        return {
+            month: monthsInString[monthIndex],
+            revenue: revenueMap.get(monthIndex) || 0,
+        };
+    }).sort((a, b) => monthsInString.indexOf(a.month) - monthsInString.indexOf(b.month));
+    return allMonthsData;
+});
+const getRecentOrders = () => __awaiter(void 0, void 0, void 0, function* () {
+    const recentOrders = yield order_model_1.Order.find({})
+        .select('order_id order_status grand_total createdAt customer_name')
+        .sort({ createdAt: -1 })
+        .limit(5);
+    return recentOrders;
+});
+const getLowStockProducts = () => __awaiter(void 0, void 0, void 0, function* () {
+    const lowStockProducts = yield product_model_1.Product.find({
+        in_stock: true,
+        stock: { $lte: 20 },
+    })
+        .select('name slug stock')
+        .sort({ stock: 1 })
+        .limit(5);
+    return lowStockProducts;
+});
+const getExpiringProducts = () => __awaiter(void 0, void 0, void 0, function* () {
+    const expiringProducts = yield product_model_1.Product.find({
+        $or: [
+            { expiry_date: { $lte: new Date() } },
+            {
+                expiry_date: {
+                    $lte: new Date(new Date().setDate(new Date().getDate() + 30)),
+                },
+            },
+        ],
+    })
+        .select('name slug expiry_date')
+        .sort({ expiry_date: 1 })
+        .limit(5);
+    return expiringProducts;
+});
 exports.DashboardService = {
     getStatsSummary,
+    getRevenueSummary,
+    getRecentOrders,
+    getLowStockProducts,
+    getExpiringProducts,
 };
