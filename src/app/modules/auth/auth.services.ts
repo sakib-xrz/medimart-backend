@@ -83,7 +83,7 @@ const ChangePassword = async (
 ) => {
   const isUserValid = await User.findOne({
     _id: user.id,
-    is_blocked: false,
+    is_deleted: false,
   }).select('+password');
 
   if (!isUserValid) {

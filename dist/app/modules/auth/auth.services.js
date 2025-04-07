@@ -60,7 +60,7 @@ const Register = (payload) => __awaiter(void 0, void 0, void 0, function* () {
 const ChangePassword = (payload, user) => __awaiter(void 0, void 0, void 0, function* () {
     const isUserValid = yield user_model_1.User.findOne({
         _id: user.id,
-        is_blocked: false,
+        is_deleted: false,
     }).select('+password');
     if (!isUserValid) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'No user found');
