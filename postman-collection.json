@@ -1,0 +1,572 @@
+{
+  "info": {
+    "name": "MediMart API Collection",
+    "description": "Complete API collection for MediMart backend application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.accessToken) {",
+                  "        pm.collectionVariables.set('authToken', response.data.accessToken);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"password123\",\n  \"newPassword\": \"newPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/change-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "change-password"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Get All Customers (Admin)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "Update User Status (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"BLOCKED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Delete User (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/products?page=1&limit=10&searchTerm=&category=&sort=",
+              "host": ["{{baseUrl}}"],
+              "path": ["products"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "searchTerm",
+                  "value": ""
+                },
+                {
+                  "key": "category",
+                  "value": ""
+                },
+                {
+                  "key": "sort",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Featured Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/products/feature",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "feature"]
+            }
+          }
+        },
+        {
+          "name": "Get Products by Category",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/products/category/{{categorySlug}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "category", "{{categorySlug}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Product by Slug",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/products/{{productSlug}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "{{productSlug}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Product (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Paracetamol 500mg\",\n  \"description\": \"Pain reliever and fever reducer\",\n  \"category\": \"Pain Relief\",\n  \"price\": 12.99,\n  \"discount\": 10,\n  \"discount_type\": \"PERCENTAGE\",\n  \"stock\": 100,\n  \"requires_prescription\": false,\n  \"manufacturer\": \"PharmaCorp\",\n  \"expiry_date\": \"2025-12-31\",\n  \"form\": \"Tablet\",\n  \"dosage\": \"500mg\",\n  \"pack_size\": \"20 tablets\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["products"]
+            }
+          }
+        },
+        {
+          "name": "Create Multiple Products (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"name\": \"Aspirin 100mg\",\n    \"description\": \"Blood thinner and pain reliever\",\n    \"category\": \"Pain Relief\",\n    \"price\": 8.99,\n    \"discount\": 5,\n    \"discount_type\": \"PERCENTAGE\",\n    \"stock\": 50,\n    \"requires_prescription\": false,\n    \"manufacturer\": \"MediCorp\",\n    \"expiry_date\": \"2025-06-30\",\n    \"form\": \"Tablet\",\n    \"dosage\": \"100mg\",\n    \"pack_size\": \"30 tablets\"\n  },\n  {\n    \"name\": \"Vitamin D3 1000IU\",\n    \"description\": \"Vitamin D supplement\",\n    \"category\": \"Supplements\",\n    \"price\": 15.99,\n    \"discount\": 0,\n    \"discount_type\": \"PERCENTAGE\",\n    \"stock\": 75,\n    \"requires_prescription\": false,\n    \"manufacturer\": \"VitaCorp\",\n    \"expiry_date\": \"2026-03-15\",\n    \"form\": \"Capsule\",\n    \"dosage\": \"1000IU\",\n    \"pack_size\": \"60 capsules\"\n  }\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/products/bulk",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "bulk"]
+            }
+          }
+        },
+        {
+          "name": "Update Product (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 14.99,\n  \"stock\": 80,\n  \"discount\": 15\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/products/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "{{productId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Product (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/products/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "{{productId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Get Cart Products",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productIds\": [\"{{productId1}}\", \"{{productId2}}\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cart",
+              "host": ["{{baseUrl}}"],
+              "path": ["cart"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "customer_name",
+                  "value": "John Doe",
+                  "type": "text"
+                },
+                {
+                  "key": "customer_email",
+                  "value": "john.doe@example.com",
+                  "type": "text"
+                },
+                {
+                  "key": "customer_phone",
+                  "value": "+1234567890",
+                  "type": "text"
+                },
+                {
+                  "key": "address",
+                  "value": "123 Main St",
+                  "type": "text"
+                },
+                {
+                  "key": "city",
+                  "value": "New York",
+                  "type": "text"
+                },
+                {
+                  "key": "postal_code",
+                  "value": "10001",
+                  "type": "text"
+                },
+                {
+                  "key": "payment_method",
+                  "value": "sslcommerz",
+                  "type": "text"
+                },
+                {
+                  "key": "products",
+                  "value": "[{\"product_id\":\"{{productId}}\",\"quantity\":2}]",
+                  "type": "text"
+                },
+                {
+                  "key": "notes",
+                  "value": "Please deliver between 9 AM - 5 PM",
+                  "type": "text"
+                },
+                {
+                  "key": "prescription",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders"]
+            }
+          }
+        },
+        {
+          "name": "Get My Orders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/orders/my-orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "my-orders"]
+            }
+          }
+        },
+        {
+          "name": "Get My Order by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/orders/my-orders/{{orderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "my-orders", "{{orderId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get All Orders (Admin)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/orders/admin",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "admin"]
+            }
+          }
+        },
+        {
+          "name": "Update Order Status (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_status\": \"CONFIRMED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderId}}", "status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payment",
+      "item": [
+        {
+          "name": "Create Payment Intent",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/payment/intent/{{orderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["payment", "intent", "{{orderId}}"]
+            }
+          }
+        },
+        {
+          "name": "Verify Payment (IPN Listener)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"VALID\",\n  \"tran_id\": \"{{transactionId}}\",\n  \"val_id\": \"{{validationId}}\",\n  \"amount\": \"100.00\",\n  \"card_type\": \"VISA\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/payment/ipn_listener",
+              "host": ["{{baseUrl}}"],
+              "path": ["payment", "ipn_listener"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard (Admin)",
+      "item": [
+        {
+          "name": "Get Stats Summary",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/stats-summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "stats-summary"]
+            }
+          }
+        },
+        {
+          "name": "Get Revenue Summary",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/revenue-summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "revenue-summary"]
+            }
+          }
+        },
+        {
+          "name": "Get Recent Orders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/recent-orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "recent-orders"]
+            }
+          }
+        },
+        {
+          "name": "Get Low Stock Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/low-stock-products",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "low-stock-products"]
+            }
+          }
+        },
+        {
+          "name": "Get Expiring Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/expiring-products",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "expiring-products"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
