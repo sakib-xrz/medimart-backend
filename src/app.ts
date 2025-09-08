@@ -20,6 +20,7 @@ app.use(
       'http://localhost:3000',
       'https://medimart-self.vercel.app',
       'https://medimart-store.vercel.app',
+      'https://www.medimart-store.xyz',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders:

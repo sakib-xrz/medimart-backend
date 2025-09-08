@@ -22,6 +22,7 @@ app.use((0, cors_1.default)({
         'http://localhost:3000',
         'https://medimart-self.vercel.app',
         'https://medimart-store.vercel.app',
+        'https://www.medimart-store.xyz',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type, Authorization, Origin, X-Requested-With, Accept',
